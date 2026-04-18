@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+    <title>{{ game_name }} - {{ emulator_name }}</title>
+    <style>
+        * {
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+            margin: 0;
+            padding: 0;
+        }
+        
+        *::-webkit-scrollbar {
+            display: none;
+        }
+        
+        html, body {
+            overscroll-behavior: none;
+            background-color: #000;
+            touch-action: none;
+            user-select: none;
+            -moz-user-select: none;
+            -webkit-user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+        
+        #game {
+            width: 100vw;
+            height: 100vh;
+        }
+        
+        .loading {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: #000;
+            z-index: 1000;
+        }
+        
+        .game-title {
+            color: white;
+            font-family: Arial, sans-serif;
+            font-size: 2em;
+            margin-bottom: 30px;
+            text-align: center;
+            padding: 0 20px;
+        }
+        
+        .lds-spinner {
+            color: #fff;
+            display: inline-block;
+            position: relative;
+            width: 64px;
+            height: 64px;
+        }
+        
+        .lds-spinner div {
+            transform-origin: 32px 32px;
+            animation: lds-spinner 1.2s linear infinite;
+        }
+        
+        .lds-spinner div:after {
+            content: " ";
+            display: block;
+            position: absolute;
+            top: 3px;
+            left: 29px;
+            width: 5px;
+            height: 14px;
+            border-radius: 20%;
+            background: #fff;
+        }
+        
+        .lds-spinner div:nth-child(1) { transform: rotate(0deg); animation-delay: -1.1s; }
+        .lds-spinner div:nth-child(2) { transform: rotate(30deg); animation-delay: -1s; }
+        .lds-spinner div:nth-child(3) { transform: rotate(60deg); animation-delay: -0.9s; }
+        .lds-spinner div:nth-child(4) { transform: rotate(90deg); animation-delay: -0.8s; }
+        .lds-spinner div:nth-child(5) { transform: rotate(120deg); animation-delay: -0.7s; }
+        .lds-spinner div:nth-child(6) { transform: rotate(150deg); animation-delay: -0.6s; }
+        .lds-spinner div:nth-child(7) { transform: rotate(180deg); animation-delay: -0.5s; }
+        .lds-spinner div:nth-child(8) { transform: rotate(210deg); animation-delay: -0.4s; }
+        .lds-spinner div:nth-child(9) { transform: rotate(240deg); animation-delay: -0.3s; }
+        .lds-spinner div:nth-child(10) { transform: rotate(270deg); animation-delay: -0.2s; }
+        .lds-spinner div:nth-child(11) { transform: rotate(300deg); animation-delay: -0.1s; }
+        .lds-spinner div:nth-child(12) { transform: rotate(330deg); animation-delay: 0s; }
+        
+        @keyframes lds-spinner {
+            0% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+        
+        .back-link {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            color: #333;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-family: Arial, sans-serif;
+            font-weight: bold;
+            z-index: 999;
+            transition: background 0.3s ease;
+        }
+        
+        .back-link:hover {
+            background: white;
+        }
+        
+        .volume-control {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 10px 20px;
+            border-radius: 5px;
+            z-index: 999;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-family: Arial, sans-serif;
+        }
+        
+        .volume-control label {
+            color: #333;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        
+        .volume-control input[type="range"] {
+            width: 100px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <a href="/emulator/{{ emulator_id }}" class="back-link">← Retour</a>
+    
+    <div class="volume-control">
+        <label for="volume">🔊 Volume:</label>
+        <input type="range" id="volume" min="0" max="100" value="50">
+        <span id="volume-value">50%</span>
+    </div>
+    
+    <div class="loading" id="loading">
+        <div class="game-title">{{ game_name }}</div>
+        <div class="lds-spinner">
+            <div></div><div></div><div></div><div></div>
+            <div></div><div></div><div></div><div></div>
+            <div></div><div></div><div></div><div></div>
+        </div>
+    </div>
+    
+    <div id="game"></div>
+    
+    <script src="/static/{{ emulator_js }}"></script>
+    <script>
+        function isMobileDevice() {
+            return !!(
+                navigator.userAgent.match(/Android/i) ||
+                navigator.userAgent.match(/iPhone/i) ||
+                navigator.userAgent.match(/iPad/i) ||
+                navigator.userAgent.match(/iPod/i)
+            );
+        }
+        
+        // Load the ROM
+        var gameURL = "/rom/{{ emulator_id }}/{{ rom_filename }}";
+        
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", gameURL, true);
+        xhr.responseType = "arraybuffer";
+        
+        xhr.addEventListener("readystatechange", function() {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                var pleaseWait = document.getElementById("loading");
+                
+                var embedFunction = null;
+                var emulatorName = "{{ emulator_id }}";
+                
+                // Determine which embed function to use
+                if (typeof embedNintendo !== 'undefined') embedFunction = embedNintendo;
+                else if (typeof embedGameBoy !== 'undefined') embedFunction = embedGameBoy;
+                else if (typeof embedGameBoyAdvance !== 'undefined') embedFunction = embedGameBoyAdvance;
+                else if (typeof embedSuperNintendo !== 'undefined') embedFunction = embedSuperNintendo;
+                else if (typeof embedNintendo64 !== 'undefined') embedFunction = embedNintendo64;
+                else if (typeof embedGenesis !== 'undefined') embedFunction = embedGenesis;
+                else if (typeof embedDOS !== 'undefined') embedFunction = embedDOS;
+                else if (typeof embedMAME !== 'undefined') embedFunction = embedMAME;
+                
+                if (embedFunction) {
+                    embedFunction({
+                        container: "game",
+                        name: "{{ rom_filename }}",
+                        rom: xhr.response,
+                        soundEnabled: true,
+                        showMobileControls: isMobileDevice(),
+                        backText: "RETOUR",
+                        soundText: "SON",
+                        loadText: "CHARGER",
+                        saveText: "SAUVER",
+                        backEnabled: false,
+                        player1: {
+                            up: "ArrowUp",
+                            down: "ArrowDown",
+                            left: "ArrowLeft",
+                            right: "ArrowRight",
+                            select: "KeyA",
+                            start: "KeyS",
+                            a: "KeyX",
+                            b: "KeyZ"
+                        },
+                        player2: {
+                            up: "Numpad8",
+                            down: "Numpad2",
+                            left: "Numpad4",
+                            right: "Numpad6",
+                            select: "Numpad1",
+                            start: "Numpad3",
+                            a: "Numpad7",
+                            b: "Numpad9"
+                        },
+                        cbStarted: function() {
+                            pleaseWait.style.display = "none";
+                            setupVolumeControl();
+                        }
+                    });
+                } else {
+                    alert("Emulator not loaded properly");
+                }
+            }
+        });
+        
+        xhr.send();
+        
+        // Volume control
+        function setupVolumeControl() {
+            var volumeSlider = document.getElementById('volume');
+            var volumeValue = document.getElementById('volume-value');
+            var audioElements = document.querySelectorAll('audio');
+            
+            volumeSlider.addEventListener('input', function() {
+                var volume = this.value / 100;
+                volumeValue.textContent = this.value + '%';
+                
+                // Update all audio elements
+                audioElements.forEach(function(audio) {
+                    audio.volume = volume;
+                });
+                
+                // Try to update emulator audio if available
+                if (window.EJS_emulator && window.EJS_emulator.audio) {
+                    window.EJS_emulator.audio.volume = volume;
+                }
+            });
+            
+            // Set initial volume
+            var initialVolume = volumeSlider.value / 100;
+            setTimeout(function() {
+                audioElements = document.querySelectorAll('audio');
+                audioElements.forEach(function(audio) {
+                    audio.volume = initialVolume;
+                });
+            }, 500);
+        }
+    </script>
+</body>
+</html>

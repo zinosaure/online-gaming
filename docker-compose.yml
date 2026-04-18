@@ -1,0 +1,27 @@
+networks:
+    skinoapp_network:
+        external: true
+
+services:
+
+    online-gaming:
+        build:
+            context: ./src
+            dockerfile: Dockerfile
+        container_name:  online-gaming
+        restart: always
+        mem_limit: 512m
+        cpus: "0.5"
+        networks:
+            skinoapp_network:
+                aliases:
+                    - local-console.nbx
+        ports:
+            - 13001:80
+        environment:
+            - PUID=${PUID}
+            - PGID=${PGID}
+            - TZ=${TIMEZONE}
+        volumes:
+            - ./src/app:/app
+            - /mnt/media/openbox/games/internet/roms:/mnt/media/roms:ro

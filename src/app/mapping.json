@@ -1,0 +1,71 @@
+{
+    "DOS": {
+        "emulator": "DOS.min.js",
+        "roms": "dos",
+        "extensions": [
+            ".dos",
+            ".iso",
+            ".img",
+            ".bin",
+            ".zip"
+        ]
+    },
+    "GameBoy": {
+        "emulator": "GameBoy.min.js",
+        "extensions": [
+            ".gb",
+            ".gbc",
+            ".zip"
+        ],
+        "roms": "gbc"
+    },
+    "GameBoyAdvance": {
+        "emulator": "GameBoyAdvance.min.js",
+        "extensions": [
+            ".gba",
+            ".zip"
+        ],
+        "roms": "gba"
+    },
+    "Genesis": {
+        "emulator": "Genesis.min.js",
+        "extensions": [
+            ".gen",
+            ".smd",
+            ".bin",
+            ".zip"
+        ],
+        "roms": "genesis"
+    },
+    "MAME": {
+        "emulator": "MAME.min.js",
+        "extensions": [
+            ".zip"
+        ],
+        "roms": "mame"
+    },
+    "Nintendo": {
+        "emulator": "Nintendo.min.js",
+        "extensions": [
+            ".nes",
+            ".zip"
+        ],
+        "roms": "nes"
+    },
+    "Nintendo64": {
+        "emulator": "Nintendo64.min.js",
+        "extensions": [
+            ".n64",
+            ".zip"
+        ],
+        "roms": "n64"
+    },
+    "SuperNintendo": {
+        "emulator": "SuperNintendo.min.js",
+        "extensions": [
+            ".snes",
+            ".zip"
+        ],
+        "roms": "snes"
+    }
+}
