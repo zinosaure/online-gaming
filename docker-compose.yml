@@ -23,5 +23,5 @@ services:
             - PGID=${PGID}
             - TZ=${TIMEZONE}
         volumes:
-            - ./src/app:/app
+            - ./src:/app
             - /mnt/media/openbox/games/internet/roms:/mnt/media/roms:ro

@@ -6,20 +6,23 @@ Un système d'émulation rétro avec interface web simple, construit avec FastAP
 
 ```
 .
-├── docker-compose.yml
-├── examples/              # Exemples HTML de référence
-├── src/
-│   ├── Dockerfile
-│   ├── requirements.txt
-│   └── app/
-│       ├── main.py        # Serveur FastAPI
-│       ├── mapping.json   # Configuration des émulateurs
-│       ├── templates/     # Templates Jinja2
-│       │   ├── index.html
-│       │   ├── games.html
-│       │   ├── player.html
-│       │   └── error.html
-│       └── emulatorjs/    # Fichiers JS des émulateurs
+├── docker-compose.yml     # Configuration Docker
+├── launch.sh             # Script de lancement
+├── CONTROLS.md          # Documentation des contrôles
+├── examples/            # Exemples HTML de référence
+└── src/
+    ├── Dockerfile
+    ├── requirements.txt
+    ├── main.py          # Serveur FastAPI
+    └── app/
+        ├── mapping.json      # Configuration des émulateurs
+        ├── html/            # Templates Jinja2
+        │   ├── index.html
+        │   ├── games.html
+        │   ├── player.html
+        │   └── error.html
+        └── public/
+            └── css-js/      # Fichiers JS/CSS des émulateurs
 ```
 
 ## Fonctionnalités

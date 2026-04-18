@@ -11,14 +11,14 @@ from typing import List, Dict
 
 app = FastAPI()
 
-# Mount static files (emulatorjs)
-app.mount("/static", StaticFiles(directory="emulatorjs"), name="static")
+# Mount static files (CSS/JS)
+app.mount("/static", StaticFiles(directory="app/public/css-js"), name="static")
 
 # Templates
-templates = Jinja2Templates(directory="templates")
+templates = Jinja2Templates(directory="app/html")
 
 # Load mapping configuration
-with open("mapping.json", "r") as f:
+with open("app/mapping.json", "r") as f:
     EMULATOR_CONFIG = json.load(f)
 
 # ROM base path (from docker volume)
