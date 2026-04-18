@@ -1,0 +1,293 @@
+/* Player Page JavaScript */
+
+let emulatorInstance = null;
+let isMenuOpen = false;
+let gamePaused = false;
+
+// Parse controls configuration from backend (injected by template)
+// This will be set by the template: const controlsConfig = {{ controls|safe }};
+
+function isMobileDevice() {
+    return !!(
+        navigator.userAgent.match(/Android/i) ||
+        navigator.userAgent.match(/iPhone/i) ||
+        navigator.userAgent.match(/iPad/i) ||
+        navigator.userAgent.match(/iPod/i)
+    );
+}
+
+function showError(message) {
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('errorText').textContent = message;
+    document.getElementById('errorMessage').style.display = 'block';
+}
+
+function toggleMenu() {
+    isMenuOpen = !isMenuOpen;
+    const menu = document.getElementById('pushMenu');
+    const overlay = document.getElementById('menuOverlay');
+    const pausedIndicator = document.getElementById('gamePaused');
+    
+    if (isMenuOpen) {
+        menu.classList.add('active');
+        overlay.classList.add('active');
+        pausedIndicator.style.display = 'block';
+        pauseEmulator();
+    } else {
+        menu.classList.remove('active');
+        overlay.classList.remove('active');
+        pausedIndicator.style.display = 'none';
+        resumeEmulator();
+    }
+}
+
+function pauseEmulator() {
+    if (emulatorInstance && typeof emulatorInstance.pause === 'function') {
+        emulatorInstance.pause();
+        gamePaused = true;
+    }
+}
+
+function resumeEmulator() {
+    if (emulatorInstance && typeof emulatorInstance.resume === 'function') {
+        emulatorInstance.resume();
+        gamePaused = false;
+    }
+}
+
+// Initialize menu events
+function initializeMenu() {
+    // Menu button event
+    document.getElementById('menuButton').addEventListener('click', toggleMenu);
+    document.getElementById('menuOverlay').addEventListener('click', toggleMenu);
+    
+    // Keyboard shortcuts for menu - dynamically detect based on controls
+    let menuKey1 = 'KeyA'; // default select
+    let menuKey2 = 'KeyS'; // default start
+    let menuKey1Pressed = false;
+    let menuKey2Pressed = false;
+    let menuShortcutText = 'Select + Start';
+    
+    if (typeof controlsConfig !== 'undefined' && controlsConfig.player1) {
+        // Priority: select + start, or mode + start, or z + start
+        if (controlsConfig.player1.select && controlsConfig.player1.start) {
+            menuKey1 = controlsConfig.player1.select;
+            menuKey2 = controlsConfig.player1.start;
+            menuShortcutText = 'Select + Start';
+        } else if (controlsConfig.player1.mode && controlsConfig.player1.start) {
+            menuKey1 = controlsConfig.player1.mode;
+            menuKey2 = controlsConfig.player1.start;
+            menuShortcutText = 'Mode + Start';
+        } else if (controlsConfig.player1.z && controlsConfig.player1.start) {
+            menuKey1 = controlsConfig.player1.z;
+            menuKey2 = controlsConfig.player1.start;
+            menuShortcutText = 'Z + Start';
+        } else if (controlsConfig.player1.start) {
+            // If only start exists, use L/R + Start or just Start alone won't work well
+            // Let's use a fallback combination
+            menuKey1 = controlsConfig.player1.l || controlsConfig.player1.z || 'KeyA';
+            menuKey2 = controlsConfig.player1.start;
+            menuShortcutText = (controlsConfig.player1.l ? 'L' : 'Z') + ' + Start';
+        }
+    }
+    
+    // Update menu shortcut text in UI
+    document.getElementById('menuShortcut').textContent = menuShortcutText;
+    
+    document.addEventListener('keydown', function(e) {
+        if (e.code === menuKey1) menuKey1Pressed = true;
+        if (e.code === menuKey2) menuKey2Pressed = true;
+        
+        if (menuKey1Pressed && menuKey2Pressed && !isMenuOpen) {
+            toggleMenu();
+        }
+        
+        // ESC to close menu
+        if (e.code === 'Escape' && isMenuOpen) {
+            toggleMenu();
+        }
+    });
+    
+    document.addEventListener('keyup', function(e) {
+        if (e.code === menuKey1) menuKey1Pressed = false;
+        if (e.code === menuKey2) menuKey2Pressed = false;
+    });
+}
+
+// Initialize menu action buttons
+function initializeMenuActions(emulatorId) {
+    // Exit button
+    document.getElementById('exitBtn').addEventListener('click', function() {
+        window.location.href = '/emulator/' + emulatorId;
+    });
+    
+    // Save state
+    document.getElementById('saveStateBtn').addEventListener('click', function() {
+        if (emulatorInstance && typeof emulatorInstance.saveState === 'function') {
+            emulatorInstance.saveState();
+            alert('État sauvegardé !');
+        } else {
+            // Fallback: trigger button click in emulator UI
+            const saveBtn = document.querySelector('[data-action="save"]') || document.querySelector('button:contains("SAVE")');
+            if (saveBtn) saveBtn.click();
+        }
+    });
+    
+    // Load state
+    document.getElementById('loadStateBtn').addEventListener('click', function() {
+        if (emulatorInstance && typeof emulatorInstance.loadState === 'function') {
+            emulatorInstance.loadState();
+            alert('État chargé !');
+        } else {
+            // Fallback: trigger button click in emulator UI
+            const loadBtn = document.querySelector('[data-action="load"]') || document.querySelector('button:contains("LOAD")');
+            if (loadBtn) loadBtn.click();
+        }
+    });
+    
+    // Reset game
+    document.getElementById('resetBtn').addEventListener('click', function() {
+        if (confirm('Voulez-vous vraiment redémarrer le jeu ?')) {
+            if (emulatorInstance && typeof emulatorInstance.reset === 'function') {
+                emulatorInstance.reset();
+            } else {
+                location.reload();
+            }
+        }
+    });
+    
+    // Fullscreen toggle
+    document.getElementById('fullscreenBtn').addEventListener('click', function() {
+        const elem = document.documentElement;
+        if (!document.fullscreenElement) {
+            if (elem.requestFullscreen) {
+                elem.requestFullscreen();
+            } else if (elem.webkitRequestFullscreen) {
+                elem.webkitRequestFullscreen();
+            } else if (elem.msRequestFullscreen) {
+                elem.msRequestFullscreen();
+            }
+        } else {
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+            }
+        }
+    });
+}
+
+// Initialize volume control
+function initializeVolumeControl() {
+    const volumeSlider = document.getElementById('volumeSlider');
+    const volumeValue = document.getElementById('volumeValue');
+    
+    volumeSlider.addEventListener('input', function() {
+        const volume = this.value / 100;
+        volumeValue.textContent = this.value + '%';
+        
+        // Update all audio elements
+        const audioElements = document.querySelectorAll('audio');
+        audioElements.forEach(function(audio) {
+            audio.volume = volume;
+        });
+        
+        // Try to update emulator audio if available
+        if (emulatorInstance && emulatorInstance.audio) {
+            emulatorInstance.audio.volume = volume;
+        }
+        if (window.EJS_emulator && window.EJS_emulator.audio) {
+            window.EJS_emulator.audio.volume = volume;
+        }
+    });
+}
+
+// Setup volume after emulator starts
+function setupVolumeControl() {
+    const volumeSlider = document.getElementById('volumeSlider');
+    var audioElements = document.querySelectorAll('audio');
+    var initialVolume = volumeSlider.value / 100;
+    
+    setTimeout(function() {
+        audioElements = document.querySelectorAll('audio');
+        audioElements.forEach(function(audio) {
+            audio.volume = initialVolume;
+        });
+    }, 500);
+}
+
+// Load and start the emulator
+function loadEmulator(emulatorId, romFilename, emulatorJs) {
+    var gameURL = "/rom/" + emulatorId + "/" + romFilename;
+    
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", gameURL, true);
+    xhr.responseType = "arraybuffer";
+    
+    xhr.addEventListener("error", function() {
+        showError("Erreur réseau lors du chargement de la ROM.");
+    });
+    
+    xhr.addEventListener("readystatechange", function() {
+        if (xhr.readyState === 4) {
+            if (xhr.status === 200) {
+                var pleaseWait = document.getElementById("loading");
+                
+                var embedFunction = null;
+                
+                // Determine which embed function to use
+                if (typeof embedNintendo !== 'undefined') embedFunction = embedNintendo;
+                else if (typeof embedGameBoy !== 'undefined') embedFunction = embedGameBoy;
+                else if (typeof embedGameBoyAdvance !== 'undefined') embedFunction = embedGameBoyAdvance;
+                else if (typeof embedSuperNintendo !== 'undefined') embedFunction = embedSuperNintendo;
+                else if (typeof embedNintendo64 !== 'undefined') embedFunction = embedNintendo64;
+                else if (typeof embedGenesis !== 'undefined') embedFunction = embedGenesis;
+                else if (typeof embedDOS !== 'undefined') embedFunction = embedDOS;
+                else if (typeof embedMAME !== 'undefined') embedFunction = embedMAME;
+                
+                if (embedFunction) {
+                    try {
+                        // Build emulator configuration
+                        const emulatorConfig = {
+                            container: "game",
+                            name: romFilename,
+                            rom: xhr.response,
+                            soundEnabled: true,
+                            showMobileControls: isMobileDevice(),
+                            backText: "RETOUR",
+                            soundText: "SON",
+                            loadText: "CHARGER",
+                            saveText: "SAUVER",
+                            backEnabled: false,
+                            cbStarted: function() {
+                                pleaseWait.style.display = "none";
+                                setupVolumeControl();
+                            },
+                            cbError: function(error) {
+                                showError("L'émulateur n'a pas pu charger ce jeu. Format de ROM incompatible ou fichier corrompu.");
+                            }
+                        };
+                        
+                        // Add controls configuration if available
+                        if (typeof controlsConfig !== 'undefined') {
+                            if (controlsConfig.player1) {
+                                emulatorConfig.player1 = controlsConfig.player1;
+                            }
+                            if (controlsConfig.player2) {
+                                emulatorConfig.player2 = controlsConfig.player2;
+                            }
+                        }
+                        
+                        emulatorInstance = embedFunction(emulatorConfig);
+                    } catch (error) {
+                        showError("Erreur lors de l'initialisation de l'émulateur: " + error.message);
+                    }
+                } else {
+                    showError("Émulateur non chargé correctement. Veuillez rafraîchir la page.");
+                }
+            } else {
+                showError("Erreur HTTP " + xhr.status + ": Impossible de charger la ROM.");
+            }
+        }
+    });
+    
+    xhr.send();
+}

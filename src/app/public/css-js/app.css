@@ -1,0 +1,233 @@
+/* ================================================
+   RESET & BASE STYLES
+   ================================================ */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    padding: 20px;
+}
+
+/* ================================================
+   CONTAINER
+   ================================================ */
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+/* ================================================
+   TYPOGRAPHY
+   ================================================ */
+h1 {
+    text-align: center;
+    color: white;
+    font-size: 3em;
+    margin-bottom: 40px;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+}
+
+h2 {
+    color: white;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+}
+
+/* ================================================
+   BUTTONS
+   ================================================ */
+.back-button {
+    display: inline-block;
+    background: white;
+    color: #667eea;
+    padding: 12px 30px;
+    border-radius: 25px;
+    text-decoration: none;
+    font-weight: bold;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.back-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 7px 20px rgba(0,0,0,0.3);
+}
+
+/* ================================================
+   CARDS
+   ================================================ */
+.emulator-card {
+    background: white;
+    border-radius: 15px;
+    padding: 40px;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.emulator-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+}
+
+.emulator-image {
+    font-size: 4em;
+    margin-bottom: 15px;
+}
+
+.emulator-name {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.emulator-description {
+    font-size: 0.9em;
+    color: #777;
+    margin-bottom: 20px;
+    line-height: 1.4;
+    flex-grow: 1;
+}
+
+/* ================================================
+   GRIDS
+   ================================================ */
+.emulator-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 30px;
+    padding: 20px;
+}
+
+.emulator-grid .emulator-card {
+    width: 340px;
+    min-height: 280px;
+}
+
+.games-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+    padding: 20px;
+}
+
+/* ================================================
+   GAME ITEMS
+   ================================================ */
+.game-item {
+    background: white;
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    text-decoration: none;
+    color: #333;
+    font-weight: 500;
+}
+
+.game-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+    background: #f8f9fa;
+}
+
+/* ================================================
+   COUNTERS & BADGES
+   ================================================ */
+.rom-count {
+    font-size: 1.2em;
+    color: #666;
+    background: #f0f0f0;
+    padding: 10px 20px;
+    border-radius: 20px;
+    display: inline-block;
+}
+
+.rom-count strong {
+    color: #667eea;
+}
+
+/* ================================================
+   MESSAGES
+   ================================================ */
+.no-emulators,
+.no-games {
+    text-align: center;
+    color: white;
+    font-size: 1.5em;
+    margin-top: 50px;
+}
+
+.error-container {
+    text-align: center;
+    color: white;
+    padding: 50px 20px;
+}
+
+.error-container h1 {
+    font-size: 4em;
+    margin-bottom: 20px;
+}
+
+.error-container p {
+    font-size: 1.3em;
+    margin-bottom: 30px;
+    opacity: 0.9;
+}
+
+/* ================================================
+   HEADER
+   ================================================ */
+.header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+/* ================================================
+   RESPONSIVE
+   ================================================ */
+@media (max-width: 768px) {
+    h1 {
+        font-size: 2em;
+    }
+    
+    .emulator-grid .emulator-card {
+        width: 100%;
+        max-width: 400px;
+    }
+    
+    .games-grid {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    body {
+        padding: 10px;
+    }
+    
+    h1 {
+        font-size: 1.5em;
+        margin-bottom: 20px;
+    }
+    
+    .games-grid {
+        grid-template-columns: 1fr;
+    }
+}

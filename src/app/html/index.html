@@ -1,132 +1,31 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Retro Gaming Console</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: 'Arial', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }
-        
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-        
-        h1 {
-            text-align: center;
-            color: white;
-            font-size: 3em;
-            margin-bottom: 40px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-        }
-        
-        .emulator-grid {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 30px;
-            padding: 20px;
-        }
-        
-        .emulator-card {
-            background: white;
-            border-radius: 15px;
-            padding: 40px;
-            text-align: center;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            cursor: pointer;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            text-decoration: none;
-            color: inherit;
-            display: block;
-            width: 340px;
-            min-height: 280px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
-        
-        .emulator-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
-        }
-        
-        .emulator-image {
-            font-size: 4em;
-            margin-bottom: 15px;
-        }
-        
-        .emulator-name {
-            font-size: 1.5em;
-            font-weight: bold;
-            color: #333;
-            margin-bottom: 10px;
-        }
-        
-        .emulator-description {
-            font-size: 0.9em;
-            color: #777;
-            margin-bottom: 20px;
-            line-height: 1.4;
-            flex-grow: 1;
-        }
-        
-        .rom-count {
-            font-size: 1.2em;
-            color: #666;
-            background: #f0f0f0;
-            padding: 10px 20px;
-            border-radius: 20px;
-            display: inline-block;
-        }
-        
-        .rom-count strong {
-            color: #667eea;
-        }
-        
-        .no-emulators {
-            text-align: center;
-            color: white;
-            font-size: 1.5em;
-            margin-top: 50px;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h1>🎮 Retro Gaming Console</h1>
-        
-        {% if emulators %}
-        <div class="emulator-grid">
-            {% for emulator in emulators %}
-            <a href="/emulator/{{ emulator.id }}" class="emulator-card">
-                <div>
-                    <div class="emulator-image">{{ emulator.image }}</div>
-                    <div class="emulator-name">{{ emulator.name }}</div>
-                    <div class="emulator-description">{{ emulator.description }}</div>
-                </div>
-                <div class="rom-count">
-                    <strong>{{ emulator.rom_count }}</strong> jeu{% if emulator.rom_count != 1 %}x{% endif %}
-                </div>
-            </a>
-            {% endfor %}
-        </div>
-        {% else %}
-        <div class="no-emulators">
-            Aucun émulateur disponible
-        </div>
-        {% endif %}
+{% extends "base.html" %}
+
+{% block title %}🎮 Retro Gaming Console{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>🎮 Retro Gaming Console</h1>
+    
+    {% if emulators %}
+    <div class="emulator-grid">
+        {% for emulator in emulators %}
+        <a href="/emulator/{{ emulator.id }}" class="emulator-card">
+            <div>
+                <div class="emulator-image">{{ emulator.image }}</div>
+                <div class="emulator-name">{{ emulator.name }}</div>
+                <div class="emulator-description">{{ emulator.description }}</div>
+            </div>
+            <div class="rom-count">
+                <strong>{{ emulator.rom_count }}</strong> jeu{% if emulator.rom_count != 1 %}x{% endif %}
+            </div>
+        </a>
+        {% endfor %}
     </div>
-</body>
-</html>
+    {% else %}
+    <div class="no-emulators">
+        Aucun émulateur disponible
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
