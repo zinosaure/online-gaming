@@ -1,9 +1,11 @@
 from fastapi import FastAPI, Request
-from fastapi.responses import HTMLResponse, FileResponse
+from fastapi.responses import HTMLResponse, FileResponse, Response
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 import json
 import os
+import zipfile
+import io
 from pathlib import Path
 from typing import List, Dict
 
@@ -24,22 +26,29 @@ ROM_BASE_PATH = "/mnt/media/roms"
 
 
 def get_available_emulators() -> List[Dict]:
-    """Get list of available emulators with ROM counts"""
+    """Get list of available emulators with ROM counts (only activated ones)"""
     emulators = []
-    for name, config in EMULATOR_CONFIG.items():
+    for emulator_id, config in EMULATOR_CONFIG.items():
+        # Skip deactivated emulators
+        if not config.get("activated", True):
+            continue
+            
         rom_path = os.path.join(ROM_BASE_PATH, config["roms"])
         rom_count = 0
         
         if os.path.exists(rom_path):
-            # Count ROMs matching extensions
+            # Count ROMs matching extensions (including subdirectories)
             extensions = config.get("extensions", [])
-            for file in os.listdir(rom_path):
-                if any(file.lower().endswith(ext.lower()) for ext in extensions):
-                    rom_count += 1
+            for root, dirs, files in os.walk(rom_path):
+                for file in files:
+                    if any(file.lower().endswith(ext.lower()) for ext in extensions):
+                        rom_count += 1
         
         emulators.append({
-            "id": name,
-            "name": name,
+            "id": emulator_id,
+            "name": config.get("name", emulator_id),
+            "description": config.get("description", ""),
+            "image": config.get("image", "🎮"),
             "emulator": config["emulator"],
             "rom_count": rom_count
         })
@@ -102,11 +111,19 @@ async def emulator_games(request: Request, emulator_id: str):
             "message": f"Emulator '{emulator_id}' not found"
         })
     
+    # Check if emulator is activated
+    config = EMULATOR_CONFIG[emulator_id]
+    if not config.get("activated", True):
+        return templates.TemplateResponse("error.html", {
+            "request": request,
+            "message": f"Emulator '{emulator_id}' is not activated"
+        })
+    
     roms = get_roms_for_emulator(emulator_id)
     return templates.TemplateResponse("games.html", {
         "request": request,
         "emulator_id": emulator_id,
-        "emulator_name": emulator_id,
+        "emulator_name": config.get("name", emulator_id),
         "games": roms
     })
 
@@ -121,21 +138,30 @@ async def play_game(request: Request, emulator_id: str, rom_filename: str):
         })
     
     config = EMULATOR_CONFIG[emulator_id]
-    display_name = os.path.splitext(rom_filename)[0]
+    
+    # Check if emulator is activated
+    if not config.get("activated", True):
+        return templates.TemplateResponse("error.html", {
+            "request": request,
+            "message": f"Emulator '{emulator_id}' is not activated"
+        })
+    
+    display_name = os.path.splitext(os.path.basename(rom_filename))[0]
     
     return templates.TemplateResponse("player.html", {
         "request": request,
         "emulator_id": emulator_id,
-        "emulator_name": emulator_id,
+        "emulator_name": config.get("name", emulator_id),
         "emulator_js": config["emulator"],
         "rom_filename": rom_filename,
-        "game_name": display_name
+        "game_name": display_name,
+        "controls": json.dumps(config.get("controls", {}))
     })
 
 
 @app.get("/rom/{emulator_id}/{rom_filename:path}")
 async def get_rom(emulator_id: str, rom_filename: str):
-    """Serve ROM file"""
+    """Serve ROM file (with ZIP extraction support)"""
     if emulator_id not in EMULATOR_CONFIG:
         return {"error": "Emulator not found"}
     
@@ -145,6 +171,43 @@ async def get_rom(emulator_id: str, rom_filename: str):
     if not os.path.exists(rom_path):
         return {"error": "ROM not found"}
     
+    # If it's a ZIP file, extract the first ROM file in memory
+    if rom_filename.lower().endswith('.zip'):
+        try:
+            with zipfile.ZipFile(rom_path, 'r') as zip_ref:
+                # Get list of files in the ZIP
+                file_list = zip_ref.namelist()
+                
+                # Filter for ROM files based on emulator extensions
+                extensions = config.get("extensions", [])
+                rom_files = [f for f in file_list if any(f.lower().endswith(ext.replace('.zip', '').lower()) for ext in extensions)]
+                
+                if not rom_files:
+                    # If no specific ROM found, take the first file
+                    rom_files = [f for f in file_list if not f.endswith('/')]
+                
+                if rom_files:
+                    # Extract the first ROM file to memory
+                    rom_data = zip_ref.read(rom_files[0])
+                    
+                    # Determine media type based on file extension
+                    media_type = "application/octet-stream"
+                    
+                    return Response(
+                        content=rom_data,
+                        media_type=media_type,
+                        headers={
+                            "Content-Disposition": f'inline; filename="{os.path.basename(rom_files[0])}"'
+                        }
+                    )
+                else:
+                    return {"error": "No ROM file found in ZIP archive"}
+        except zipfile.BadZipFile:
+            return {"error": "Invalid ZIP file"}
+        except Exception as e:
+            return {"error": f"Error extracting ZIP: {str(e)}"}
+    
+    # Regular file serving
     return FileResponse(rom_path)
 
 

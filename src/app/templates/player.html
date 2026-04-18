@@ -98,58 +98,338 @@
             100% { opacity: 0; }
         }
         
-        .back-link {
+        /* Error Message */
+        .error-message {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(220, 38, 38, 0.95);
+            color: white;
+            padding: 30px 40px;
+            border-radius: 10px;
+            z-index: 2000;
+            text-align: center;
+            font-family: Arial, sans-serif;
+            max-width: 500px;
+        }
+        
+        .error-message h2 {
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+        
+        .error-message p {
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+        
+        .error-message button {
+            background: white;
+            color: #dc2626;
+            border: none;
+            padding: 10px 30px;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 1em;
+        }
+        
+        .error-message button:hover {
+            background: #f3f4f6;
+        }
+        
+        /* Menu Button */
+        .menu-button {
             position: fixed;
             top: 20px;
             left: 20px;
             background: rgba(255, 255, 255, 0.9);
             color: #333;
-            padding: 10px 20px;
+            padding: 12px 16px;
             border-radius: 5px;
-            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            z-index: 998;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
             font-family: Arial, sans-serif;
             font-weight: bold;
-            z-index: 999;
             transition: background 0.3s ease;
         }
         
-        .back-link:hover {
+        .menu-button:hover {
             background: white;
         }
         
-        .volume-control {
+        .menu-icon {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+        
+        .menu-icon span {
+            display: block;
+            width: 20px;
+            height: 3px;
+            background: #333;
+            border-radius: 2px;
+        }
+        
+        /* Push Menu Overlay */
+        .menu-overlay {
+            display: none;
             position: fixed;
-            top: 20px;
-            right: 20px;
-            background: rgba(255, 255, 255, 0.9);
-            padding: 10px 20px;
-            border-radius: 5px;
-            z-index: 999;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1998;
+        }
+        
+        .menu-overlay.active {
+            display: block;
+        }
+        
+        /* Push Menu */
+        .push-menu {
+            position: fixed;
+            top: 0;
+            left: -350px;
+            width: 350px;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            z-index: 1999;
+            transition: left 0.3s ease;
+            overflow-y: auto;
+            font-family: Arial, sans-serif;
+            box-shadow: 5px 0 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .push-menu.active {
+            left: 0;
+        }
+        
+        .menu-header {
+            padding: 30px 20px 20px;
+            background: rgba(0, 0, 0, 0.2);
+            color: white;
+        }
+        
+        .menu-header h2 {
+            margin: 0 0 5px 0;
+            font-size: 1.3em;
+        }
+        
+        .menu-header p {
+            margin: 0;
+            opacity: 0.9;
+            font-size: 0.9em;
+        }
+        
+        .menu-content {
+            padding: 20px;
+        }
+        
+        .menu-section {
+            margin-bottom: 25px;
+        }
+        
+        .menu-section h3 {
+            color: white;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+            opacity: 0.8;
+        }
+        
+        .menu-item {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border: none;
+            color: white;
+            padding: 15px 20px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            text-align: left;
+            font-size: 1em;
+            font-weight: 500;
+            transition: all 0.3s ease;
             display: flex;
             align-items: center;
-            gap: 10px;
-            font-family: Arial, sans-serif;
+            gap: 12px;
         }
         
-        .volume-control label {
-            color: #333;
-            font-weight: bold;
-            font-size: 14px;
+        .menu-item:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: translateX(5px);
         }
         
-        .volume-control input[type="range"] {
-            width: 100px;
+        .menu-item.danger {
+            background: rgba(239, 68, 68, 0.3);
+        }
+        
+        .menu-item.danger:hover {
+            background: rgba(239, 68, 68, 0.5);
+        }
+        
+        .menu-item-icon {
+            font-size: 1.2em;
+        }
+        
+        .volume-slider-container {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            padding: 15px 20px;
+            border-radius: 8px;
+        }
+        
+        .volume-slider-label {
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+        
+        .volume-slider {
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: rgba(255, 255, 255, 0.3);
+            outline: none;
+            -webkit-appearance: none;
+        }
+        
+        .volume-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: white;
             cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        
+        .volume-slider::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: white;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        
+        .game-paused {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 20px 40px;
+            border-radius: 10px;
+            font-family: Arial, sans-serif;
+            font-size: 1.5em;
+            z-index: 1997;
+            display: none;
+            pointer-events: none;
+        }
+        
+        @media (max-width: 768px) {
+            .push-menu {
+                width: 85%;
+                left: -85%;
+            }
         }
     </style>
 </head>
 <body>
-    <a href="/emulator/{{ emulator_id }}" class="back-link">← Retour</a>
+    <button class="menu-button" id="menuButton">
+        <div class="menu-icon">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        Menu
+    </button>
     
-    <div class="volume-control">
-        <label for="volume">🔊 Volume:</label>
-        <input type="range" id="volume" min="0" max="100" value="50">
-        <span id="volume-value">50%</span>
+    <div class="menu-overlay" id="menuOverlay"></div>
+    
+    <div class="push-menu" id="pushMenu">
+        <div class="menu-header">
+            <h2>{{ game_name }}</h2>
+            <p>{{ emulator_name }}</p>
+        </div>
+        <div class="menu-content">
+            <div class="menu-section">
+                <h3>Audio</h3>
+                <div class="volume-slider-container">
+                    <div class="volume-slider-label">
+                        <span>🔊 Volume</span>
+                        <span id="volumeValue">50%</span>
+                    </div>
+                    <input type="range" class="volume-slider" id="volumeSlider" min="0" max="100" value="50">
+                </div>
+            </div>
+            
+            <div class="menu-section">
+                <h3>Actions</h3>
+                <button class="menu-item" id="saveStateBtn">
+                    <span class="menu-item-icon">💾</span>
+                    <span>Sauvegarder l'état</span>
+                </button>
+                <button class="menu-item" id="loadStateBtn">
+                    <span class="menu-item-icon">📂</span>
+                    <span>Charger l'état</span>
+                </button>
+                <button class="menu-item" id="resetBtn">
+                    <span class="menu-item-icon">🔄</span>
+                    <span>Redémarrer le jeu</span>
+                </button>
+                <button class="menu-item" id="fullscreenBtn">
+                    <span class="menu-item-icon">⛶</span>
+                    <span>Plein écran</span>
+                </button>
+            </div>
+            
+            <div class="menu-section">
+                <h3>Navigation</h3>
+                <button class="menu-item danger" id="exitBtn">
+                    <span class="menu-item-icon">←</span>
+                    <span>Retour / Quitter</span>
+                </button>
+            </div>
+            
+            <div class="menu-section">
+                <h3>Infos</h3>
+                <div class="volume-slider-container">
+                    <p style="color: white; margin: 0; font-size: 0.9em; line-height: 1.5;">
+                        <strong>Raccourci menu:</strong> <span id="menuShortcut">Select + Start</span><br>
+                        <strong>ROM:</strong> {{ rom_filename }}<br>
+                        <strong>Émulateur:</strong> {{ emulator_name }}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="game-paused" id="gamePaused">⏸ PAUSE</div>
+    
+    <div class="error-message" id="errorMessage">
+        <h2>❌ Erreur de chargement</h2>
+        <p id="errorText">Le jeu n'a pas pu être chargé. Veuillez vérifier le fichier ROM.</p>
+        <button onclick="window.location.href='/emulator/{{ emulator_id }}'">Retour à la liste</button>
     </div>
     
     <div class="loading" id="loading">
@@ -165,6 +445,13 @@
     
     <script src="/static/{{ emulator_js }}"></script>
     <script>
+        let emulatorInstance = null;
+        let isMenuOpen = false;
+        let gamePaused = false;
+        
+        // Parse controls configuration from backend
+        const controlsConfig = {{ controls|safe }};
+        
         function isMobileDevice() {
             return !!(
                 navigator.userAgent.match(/Android/i) ||
@@ -174,6 +461,178 @@
             );
         }
         
+        function showError(message) {
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('errorText').textContent = message;
+            document.getElementById('errorMessage').style.display = 'block';
+        }
+        
+        function toggleMenu() {
+            isMenuOpen = !isMenuOpen;
+            const menu = document.getElementById('pushMenu');
+            const overlay = document.getElementById('menuOverlay');
+            const pausedIndicator = document.getElementById('gamePaused');
+            
+            if (isMenuOpen) {
+                menu.classList.add('active');
+                overlay.classList.add('active');
+                pausedIndicator.style.display = 'block';
+                pauseEmulator();
+            } else {
+                menu.classList.remove('active');
+                overlay.classList.remove('active');
+                pausedIndicator.style.display = 'none';
+                resumeEmulator();
+            }
+        }
+        
+        function pauseEmulator() {
+            if (emulatorInstance && typeof emulatorInstance.pause === 'function') {
+                emulatorInstance.pause();
+                gamePaused = true;
+            }
+        }
+        
+        function resumeEmulator() {
+            if (emulatorInstance && typeof emulatorInstance.resume === 'function') {
+                emulatorInstance.resume();
+                gamePaused = false;
+            }
+        }
+        
+        // Menu button event
+        document.getElementById('menuButton').addEventListener('click', toggleMenu);
+        document.getElementById('menuOverlay').addEventListener('click', toggleMenu);
+        
+        // Keyboard shortcuts for menu - dynamically detect based on controls
+        let menuKey1 = 'KeyA'; // default select
+        let menuKey2 = 'KeyS'; // default start
+        let menuKey1Pressed = false;
+        let menuKey2Pressed = false;
+        let menuShortcutText = 'Select + Start';
+        
+        if (controlsConfig.player1) {
+            // Priority: select + start, or mode + start, or z + start
+            if (controlsConfig.player1.select && controlsConfig.player1.start) {
+                menuKey1 = controlsConfig.player1.select;
+                menuKey2 = controlsConfig.player1.start;
+                menuShortcutText = 'Select + Start';
+            } else if (controlsConfig.player1.mode && controlsConfig.player1.start) {
+                menuKey1 = controlsConfig.player1.mode;
+                menuKey2 = controlsConfig.player1.start;
+                menuShortcutText = 'Mode + Start';
+            } else if (controlsConfig.player1.z && controlsConfig.player1.start) {
+                menuKey1 = controlsConfig.player1.z;
+                menuKey2 = controlsConfig.player1.start;
+                menuShortcutText = 'Z + Start';
+            } else if (controlsConfig.player1.start) {
+                // If only start exists, use L/R + Start or just Start alone won't work well
+                // Let's use a fallback combination
+                menuKey1 = controlsConfig.player1.l || controlsConfig.player1.z || 'KeyA';
+                menuKey2 = controlsConfig.player1.start;
+                menuShortcutText = (controlsConfig.player1.l ? 'L' : 'Z') + ' + Start';
+            }
+        }
+        
+        // Update menu shortcut text in UI
+        document.getElementById('menuShortcut').textContent = menuShortcutText;
+        
+        document.addEventListener('keydown', function(e) {
+            if (e.code === menuKey1) menuKey1Pressed = true;
+            if (e.code === menuKey2) menuKey2Pressed = true;
+            
+            if (menuKey1Pressed && menuKey2Pressed && !isMenuOpen) {
+                toggleMenu();
+            }
+            
+            // ESC to close menu
+            if (e.code === 'Escape' && isMenuOpen) {
+                toggleMenu();
+            }
+        });
+        
+        document.addEventListener('keyup', function(e) {
+            if (e.code === menuKey1) menuKey1Pressed = false;
+            if (e.code === menuKey2) menuKey2Pressed = false;
+        });
+        
+        // Menu actions
+        document.getElementById('exitBtn').addEventListener('click', function() {
+            window.location.href = '/emulator/{{ emulator_id }}';
+        });
+        
+        document.getElementById('saveStateBtn').addEventListener('click', function() {
+            if (emulatorInstance && typeof emulatorInstance.saveState === 'function') {
+                emulatorInstance.saveState();
+                alert('État sauvegardé !');
+            } else {
+                // Fallback: trigger button click in emulator UI
+                const saveBtn = document.querySelector('[data-action="save"]') || document.querySelector('button:contains("SAVE")');
+                if (saveBtn) saveBtn.click();
+            }
+        });
+        
+        document.getElementById('loadStateBtn').addEventListener('click', function() {
+            if (emulatorInstance && typeof emulatorInstance.loadState === 'function') {
+                emulatorInstance.loadState();
+                alert('État chargé !');
+            } else {
+                // Fallback: trigger button click in emulator UI
+                const loadBtn = document.querySelector('[data-action="load"]') || document.querySelector('button:contains("LOAD")');
+                if (loadBtn) loadBtn.click();
+            }
+        });
+        
+        document.getElementById('resetBtn').addEventListener('click', function() {
+            if (confirm('Voulez-vous vraiment redémarrer le jeu ?')) {
+                if (emulatorInstance && typeof emulatorInstance.reset === 'function') {
+                    emulatorInstance.reset();
+                } else {
+                    location.reload();
+                }
+            }
+        });
+        
+        document.getElementById('fullscreenBtn').addEventListener('click', function() {
+            const elem = document.documentElement;
+            if (!document.fullscreenElement) {
+                if (elem.requestFullscreen) {
+                    elem.requestFullscreen();
+                } else if (elem.webkitRequestFullscreen) {
+                    elem.webkitRequestFullscreen();
+                } else if (elem.msRequestFullscreen) {
+                    elem.msRequestFullscreen();
+                }
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        });
+        
+        // Volume control
+        const volumeSlider = document.getElementById('volumeSlider');
+        const volumeValue = document.getElementById('volumeValue');
+        
+        volumeSlider.addEventListener('input', function() {
+            const volume = this.value / 100;
+            volumeValue.textContent = this.value + '%';
+            
+            // Update all audio elements
+            const audioElements = document.querySelectorAll('audio');
+            audioElements.forEach(function(audio) {
+                audio.volume = volume;
+            });
+            
+            // Try to update emulator audio if available
+            if (emulatorInstance && emulatorInstance.audio) {
+                emulatorInstance.audio.volume = volume;
+            }
+            if (window.EJS_emulator && window.EJS_emulator.audio) {
+                window.EJS_emulator.audio.volume = volume;
+            }
+        });
+        
         // Load the ROM
         var gameURL = "/rom/{{ emulator_id }}/{{ rom_filename }}";
         
@@ -181,62 +640,68 @@
         xhr.open("GET", gameURL, true);
         xhr.responseType = "arraybuffer";
         
+        xhr.addEventListener("error", function() {
+            showError("Erreur réseau lors du chargement de la ROM.");
+        });
+        
         xhr.addEventListener("readystatechange", function() {
-            if (xhr.readyState === 4 && xhr.status === 200) {
-                var pleaseWait = document.getElementById("loading");
-                
-                var embedFunction = null;
-                var emulatorName = "{{ emulator_id }}";
-                
-                // Determine which embed function to use
-                if (typeof embedNintendo !== 'undefined') embedFunction = embedNintendo;
-                else if (typeof embedGameBoy !== 'undefined') embedFunction = embedGameBoy;
-                else if (typeof embedGameBoyAdvance !== 'undefined') embedFunction = embedGameBoyAdvance;
-                else if (typeof embedSuperNintendo !== 'undefined') embedFunction = embedSuperNintendo;
-                else if (typeof embedNintendo64 !== 'undefined') embedFunction = embedNintendo64;
-                else if (typeof embedGenesis !== 'undefined') embedFunction = embedGenesis;
-                else if (typeof embedDOS !== 'undefined') embedFunction = embedDOS;
-                else if (typeof embedMAME !== 'undefined') embedFunction = embedMAME;
-                
-                if (embedFunction) {
-                    embedFunction({
-                        container: "game",
-                        name: "{{ rom_filename }}",
-                        rom: xhr.response,
-                        soundEnabled: true,
-                        showMobileControls: isMobileDevice(),
-                        backText: "RETOUR",
-                        soundText: "SON",
-                        loadText: "CHARGER",
-                        saveText: "SAUVER",
-                        backEnabled: false,
-                        player1: {
-                            up: "ArrowUp",
-                            down: "ArrowDown",
-                            left: "ArrowLeft",
-                            right: "ArrowRight",
-                            select: "KeyA",
-                            start: "KeyS",
-                            a: "KeyX",
-                            b: "KeyZ"
-                        },
-                        player2: {
-                            up: "Numpad8",
-                            down: "Numpad2",
-                            left: "Numpad4",
-                            right: "Numpad6",
-                            select: "Numpad1",
-                            start: "Numpad3",
-                            a: "Numpad7",
-                            b: "Numpad9"
-                        },
-                        cbStarted: function() {
-                            pleaseWait.style.display = "none";
-                            setupVolumeControl();
+            if (xhr.readyState === 4) {
+                if (xhr.status === 200) {
+                    var pleaseWait = document.getElementById("loading");
+                    
+                    var embedFunction = null;
+                    var emulatorName = "{{ emulator_id }}";
+                    
+                    // Determine which embed function to use
+                    if (typeof embedNintendo !== 'undefined') embedFunction = embedNintendo;
+                    else if (typeof embedGameBoy !== 'undefined') embedFunction = embedGameBoy;
+                    else if (typeof embedGameBoyAdvance !== 'undefined') embedFunction = embedGameBoyAdvance;
+                    else if (typeof embedSuperNintendo !== 'undefined') embedFunction = embedSuperNintendo;
+                    else if (typeof embedNintendo64 !== 'undefined') embedFunction = embedNintendo64;
+                    else if (typeof embedGenesis !== 'undefined') embedFunction = embedGenesis;
+                    else if (typeof embedDOS !== 'undefined') embedFunction = embedDOS;
+                    else if (typeof embedMAME !== 'undefined') embedFunction = embedMAME;
+                    
+                    if (embedFunction) {
+                        try {
+                            // Build emulator configuration
+                            const emulatorConfig = {
+                                container: "game",
+                                name: "{{ rom_filename }}",
+                                rom: xhr.response,
+                                soundEnabled: true,
+                                showMobileControls: isMobileDevice(),
+                                backText: "RETOUR",
+                                soundText: "SON",
+                                loadText: "CHARGER",
+                                saveText: "SAUVER",
+                                backEnabled: false,
+                                cbStarted: function() {
+                                    pleaseWait.style.display = "none";
+                                    setupVolumeControl();
+                                },
+                                cbError: function(error) {
+                                    showError("L'émulateur n'a pas pu charger ce jeu. Format de ROM incompatible ou fichier corrompu.");
+                                }
+                            };
+                            
+                            // Add controls configuration if available
+                            if (controlsConfig.player1) {
+                                emulatorConfig.player1 = controlsConfig.player1;
+                            }
+                            if (controlsConfig.player2) {
+                                emulatorConfig.player2 = controlsConfig.player2;
+                            }
+                            
+                            emulatorInstance = embedFunction(emulatorConfig);
+                        } catch (error) {
+                            showError("Erreur lors de l'initialisation de l'émulateur: " + error.message);
                         }
-                    });
+                    } else {
+                        showError("Émulateur non chargé correctement. Veuillez rafraîchir la page.");
+                    }
                 } else {
-                    alert("Emulator not loaded properly");
+                    showError("Erreur HTTP " + xhr.status + ": Impossible de charger la ROM.");
                 }
             }
         });
@@ -245,27 +710,9 @@
         
         // Volume control
         function setupVolumeControl() {
-            var volumeSlider = document.getElementById('volume');
-            var volumeValue = document.getElementById('volume-value');
             var audioElements = document.querySelectorAll('audio');
-            
-            volumeSlider.addEventListener('input', function() {
-                var volume = this.value / 100;
-                volumeValue.textContent = this.value + '%';
-                
-                // Update all audio elements
-                audioElements.forEach(function(audio) {
-                    audio.volume = volume;
-                });
-                
-                // Try to update emulator audio if available
-                if (window.EJS_emulator && window.EJS_emulator.audio) {
-                    window.EJS_emulator.audio.volume = volume;
-                }
-            });
-            
-            // Set initial volume
             var initialVolume = volumeSlider.value / 100;
+            
             setTimeout(function() {
                 audioElements = document.querySelectorAll('audio');
                 audioElements.forEach(function(audio) {

@@ -24,24 +24,30 @@ Un système d'émulation rétro avec interface web simple, construit avec FastAP
 
 ## Fonctionnalités
 
-- 🎯 Liste des émulateurs disponibles (cards agrandies et centrées)
+- 🎯 Liste des émulateurs disponibles avec images et descriptions
 - 🎲 Browse des ROMs par émulateur (avec support des sous-dossiers)
-- 🕹️ Player plein écran pour chaque jeu
+- 🕹️ Player plein écran avec menu push intégré
 - ⌨️ Contrôles clavier configurés pour 2 joueurs
-- 🔊 Contrôle de volume intégré (0-100%)
+- 📂 Support des fichiers ZIP (extraction automatique en mémoire)
+- 🔊 Contrôle de volume dans le menu
+- 💾 Sauvegarde/chargement d'états
+- ⛶ Mode plein écran
+- ❌ Gestion des erreurs de chargement
 - 🔄 Hot reload (modifications détectées automatiquement)
-- 📱 Support mobile
+- 📱 Support mobile avec contrôles tactiles
 
 ## Émulateurs Supportés
 
-- Nintendo (NES)
-- Super Nintendo (SNES)
-- Nintendo 64
-- Game Boy / Game Boy Color
-- Game Boy Advance
-- Sega Genesis
-- DOS
-- MAME
+- 🎮 Nintendo (NES)
+- 🕹️ Super Nintendo (SNES)
+- 🎯 Nintendo 64
+- 📱 Game Boy / Game Boy Color
+- 🎲 Game Boy Advance
+- ⚡ Sega Genesis / Mega Drive
+
+**Émulateurs désactivés** (peuvent être activés dans `mapping.json`) :
+- 💻 MS-DOS
+- 🎰 MAME Arcade
 
 ## Installation
 
@@ -93,9 +99,15 @@ Les ROMs doivent être organisées selon la structure définie dans `mapping.jso
 ## Configuration
 
 Le fichier `mapping.json` définit pour chaque émulateur :
+- `activated` : Active ou désactive l'émulateur (true/false)
+- `name` : Nom complet affiché dans l'interface
+- `description` : Description de la console
+- `image` : Emoji représentant la console
 - `emulator` : Fichier JS de l'émulateur
 - `roms` : Chemin relatif vers les ROMs
 - `extensions` : Extensions de fichiers acceptées
+
+Pour activer/désactiver un émulateur, modifiez le champ `activated` dans `mapping.json`.
 
 ## Développement
 

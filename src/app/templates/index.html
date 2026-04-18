@@ -51,6 +51,10 @@
             color: inherit;
             display: block;
             width: 340px;
+            min-height: 280px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
         }
         
         .emulator-card:hover {
@@ -58,11 +62,24 @@
             box-shadow: 0 15px 40px rgba(0,0,0,0.3);
         }
         
+        .emulator-image {
+            font-size: 4em;
+            margin-bottom: 15px;
+        }
+        
         .emulator-name {
-            font-size: 1.8em;
+            font-size: 1.5em;
             font-weight: bold;
             color: #333;
-            margin-bottom: 15px;
+            margin-bottom: 10px;
+        }
+        
+        .emulator-description {
+            font-size: 0.9em;
+            color: #777;
+            margin-bottom: 20px;
+            line-height: 1.4;
+            flex-grow: 1;
         }
         
         .rom-count {
@@ -94,7 +111,11 @@
         <div class="emulator-grid">
             {% for emulator in emulators %}
             <a href="/emulator/{{ emulator.id }}" class="emulator-card">
-                <div class="emulator-name">{{ emulator.name }}</div>
+                <div>
+                    <div class="emulator-image">{{ emulator.image }}</div>
+                    <div class="emulator-name">{{ emulator.name }}</div>
+                    <div class="emulator-description">{{ emulator.description }}</div>
+                </div>
                 <div class="rom-count">
                     <strong>{{ emulator.rom_count }}</strong> jeu{% if emulator.rom_count != 1 %}x{% endif %}
                 </div>

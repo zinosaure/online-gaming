@@ -1,71 +1,200 @@
 {
-    "DOS": {
-        "emulator": "DOS.min.js",
-        "roms": "dos",
-        "extensions": [
-            ".dos",
-            ".iso",
-            ".img",
-            ".bin",
-            ".zip"
-        ]
-    },
-    "GameBoy": {
-        "emulator": "GameBoy.min.js",
-        "extensions": [
-            ".gb",
-            ".gbc",
-            ".zip"
-        ],
-        "roms": "gbc"
-    },
-    "GameBoyAdvance": {
-        "emulator": "GameBoyAdvance.min.js",
-        "extensions": [
-            ".gba",
-            ".zip"
-        ],
-        "roms": "gba"
-    },
-    "Genesis": {
-        "emulator": "Genesis.min.js",
-        "extensions": [
-            ".gen",
-            ".smd",
-            ".bin",
-            ".zip"
-        ],
-        "roms": "genesis"
-    },
-    "MAME": {
-        "emulator": "MAME.min.js",
-        "extensions": [
-            ".zip"
-        ],
-        "roms": "mame"
-    },
     "Nintendo": {
+        "activated": true,
+        "name": "Nintendo (NES)",
+        "description": "Console 8-bit de Nintendo sortie en 1983",
+        "image": "🎮",
         "emulator": "Nintendo.min.js",
-        "extensions": [
-            ".nes",
-            ".zip"
-        ],
-        "roms": "nes"
-    },
-    "Nintendo64": {
-        "emulator": "Nintendo64.min.js",
-        "extensions": [
-            ".n64",
-            ".zip"
-        ],
-        "roms": "n64"
+        "extensions": [".nes", ".zip"],
+        "roms": "nes",
+        "controls": {
+            "player1": {
+                "up": "ArrowUp",
+                "down": "ArrowDown",
+                "left": "ArrowLeft",
+                "right": "ArrowRight",
+                "select": "KeyA",
+                "start": "KeyS",
+                "a": "KeyX",
+                "b": "KeyZ"
+            },
+            "player2": {
+                "up": "Numpad8",
+                "down": "Numpad2",
+                "left": "Numpad4",
+                "right": "Numpad6",
+                "select": "Numpad1",
+                "start": "Numpad3",
+                "a": "Numpad7",
+                "b": "Numpad9"
+            }
+        }
     },
     "SuperNintendo": {
+        "activated": true,
+        "name": "Super Nintendo (SNES)",
+        "description": "Console 16-bit de Nintendo sortie en 1990",
+        "image": "🕹️",
         "emulator": "SuperNintendo.min.js",
-        "extensions": [
-            ".snes",
-            ".zip"
-        ],
-        "roms": "snes"
+        "extensions": [".snes", ".sfc", ".zip"],
+        "roms": "snes",
+        "controls": {
+            "player1": {
+                "up": "ArrowUp",
+                "down": "ArrowDown",
+                "left": "ArrowLeft",
+                "right": "ArrowRight",
+                "select": "KeyA",
+                "start": "KeyS",
+                "a": "KeyX",
+                "b": "KeyZ",
+                "x": "KeyD",
+                "y": "KeyC",
+                "l": "KeyQ",
+                "r": "KeyW"
+            },
+            "player2": {
+                "up": "Numpad8",
+                "down": "Numpad2",
+                "left": "Numpad4",
+                "right": "Numpad6",
+                "select": "Numpad1",
+                "start": "Numpad3",
+                "a": "Numpad7",
+                "b": "Numpad9",
+                "x": "Numpad5",
+                "y": "Numpad0",
+                "l": "NumpadDivide",
+                "r": "NumpadMultiply"
+            }
+        }
+    },
+    "Nintendo64": {
+        "activated": true,
+        "name": "Nintendo 64",
+        "description": "Console 64-bit de Nintendo sortie en 1996",
+        "image": "🎯",
+        "emulator": "Nintendo64.min.js",
+        "extensions": [".n64", ".zip"],
+        "roms": "n64",
+        "controls": {
+            "player1": {
+                "up": "ArrowUp",
+                "down": "ArrowDown",
+                "left": "ArrowLeft",
+                "right": "ArrowRight",
+                "start": "Enter",
+                "a": "KeyX",
+                "b": "KeyZ",
+                "z": "KeyA",
+                "l": "KeyQ",
+                "r": "KeyW",
+                "cup": "KeyI",
+                "cdown": "KeyK",
+                "cleft": "KeyJ",
+                "cright": "KeyL"
+            }
+        }
+    },
+    "GameBoy": {
+        "activated": true,
+        "name": "Game Boy / Game Boy Color",
+        "description": "Console portable de Nintendo (1989-1998)",
+        "image": "📱",
+        "emulator": "GameBoy.min.js",
+        "extensions": [".gb", ".gbc", ".zip"],
+        "roms": "gbc",
+        "controls": {
+            "player1": {
+                "up": "ArrowUp",
+                "down": "ArrowDown",
+                "left": "ArrowLeft",
+                "right": "ArrowRight",
+                "select": "KeyA",
+                "start": "KeyS",
+                "a": "KeyX",
+                "b": "KeyZ"
+            }
+        }
+    },
+    "GameBoyAdvance": {
+        "activated": true,
+        "name": "Game Boy Advance",
+        "description": "Console portable 32-bit de Nintendo sortie en 2001",
+        "image": "🎲",
+        "emulator": "GameBoyAdvance.min.js",
+        "extensions": [".gba", ".zip"],
+        "roms": "gba",
+        "controls": {
+            "player1": {
+                "up": "ArrowUp",
+                "down": "ArrowDown",
+                "left": "ArrowLeft",
+                "right": "ArrowRight",
+                "select": "KeyA",
+                "start": "KeyS",
+                "a": "KeyX",
+                "b": "KeyZ",
+                "l": "KeyQ",
+                "r": "KeyW"
+            }
+        }
+    },
+    "Genesis": {
+        "activated": true,
+        "name": "Sega Genesis / Mega Drive",
+        "description": "Console 16-bit de Sega sortie en 1988",
+        "image": "⚡",
+        "emulator": "Genesis.min.js",
+        "extensions": [".gen", ".smd", ".bin", ".zip"],
+        "roms": "genesis",
+        "controls": {
+            "player1": {
+                "up": "ArrowUp",
+                "down": "ArrowDown",
+                "left": "ArrowLeft",
+                "right": "ArrowRight",
+                "start": "Enter",
+                "mode": "KeyZ",
+                "a": "KeyA",
+                "b": "KeyS",
+                "c": "KeyD",
+                "x": "KeyQ",
+                "y": "KeyW",
+                "z": "KeyE"
+            },
+            "player2": {
+                "up": "KeyI",
+                "down": "KeyK",
+                "left": "KeyJ",
+                "right": "KeyL",
+                "start": "KeyH",
+                "mode": "KeyV",
+                "a": "KeyB",
+                "b": "KeyN",
+                "c": "KeyM",
+                "x": "KeyU",
+                "y": "KeyO",
+                "z": "KeyP"
+            }
+        }
+    },
+    "DOS": {
+        "activated": false,
+        "name": "MS-DOS",
+        "description": "Système d'exploitation pour PC (années 80-90)",
+        "image": "💻",
+        "emulator": "DOS.min.js",
+        "extensions": [".dos", ".iso", ".img", ".bin", ".zip"],
+        "roms": "dos"
+    },
+    "MAME": {
+        "activated": false,
+        "name": "MAME Arcade",
+        "description": "Émulateur d'arcade multi-systèmes",
+        "image": "🎰",
+        "emulator": "MAME.min.js",
+        "extensions": [".zip"],
+        "roms": "mame"
     }
 }
