@@ -185,5 +185,104 @@ style.textContent = `
 `;
 document.head.appendChild(style);
 
+/**
+ * ================================================
+ * SCAN FUNCTIONALITY
+ * ================================================
+ */
+
+/**
+ * Lance le scan des ROMs
+ */
+async function scanRoms() {
+    const button = document.getElementById('scanButton');
+    if (!button) return;
+    
+    // Désactiver le bouton pendant le scan
+    button.disabled = true;
+    button.textContent = '⏳ Scan en cours...';
+    
+    try {
+        const response = await fetch('/scan');
+        const data = await response.json();
+        
+        if (data.status === 'success') {
+            showToast(`✅ ${data.games_count} jeux scannés avec succès!`, 'success');
+            
+            // Si on est sur la page d'accueil avec recherche, rafraîchir les résultats
+            if (typeof performSearch === 'function') {
+                const searchInput = document.getElementById('searchInput');
+                if (searchInput && searchInput.value.trim()) {
+                    performSearch(searchInput.value);
+                }
+            }
+        } else {
+            showToast('❌ Erreur lors du scan', 'error');
+        }
+    } catch (error) {
+        console.error('Erreur scan:', error);
+        showToast('❌ Erreur de connexion', 'error');
+    } finally {
+        button.disabled = false;
+        button.textContent = '🔍 Scan';
+    }
+}
+
+/**
+ * Recherche des jeux
+ * @param {string} query - Terme de recherche
+ */
+async function performSearch(query) {
+    try {
+        const response = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
+        const data = await response.json();
+        
+        if (data.status === 'success') {
+            return data.results;
+        } else if (data.status === 'error' && data.message.includes('Index not found')) {
+            showToast('⚠️ Veuillez d\'abord scanner les jeux', 'info');
+            return [];
+        }
+        return [];
+    } catch (error) {
+        console.error('Erreur recherche:', error);
+        return [];
+    }
+}
+
+/**
+ * Génère les initiales pour un placeholder
+ * @param {string} name - Nom du jeu
+ * @returns {string}
+ */
+function getInitials(name) {
+    const words = name.replace(/[_-]/g, ' ').split(' ').filter(w => w.length > 0);
+    return words.map(w => w[0].toUpperCase()).slice(0, 3).join('');
+}
+
+/**
+ * ================================================
+ * EVENT LISTENERS
+ * ================================================
+ */
+
+// Initialisation quand le DOM est chargé
+document.addEventListener('DOMContentLoaded', function() {
+    // Bouton Scan
+    const scanButton = document.getElementById('scanButton');
+    if (scanButton) {
+        scanButton.addEventListener('click', scanRoms);
+    }
+    
+    // Lien À propos
+    const aboutLink = document.getElementById('aboutLink');
+    if (aboutLink) {
+        aboutLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            showToast('Console de jeux rétro • Version 2.0', 'info', 4000);
+        });
+    }
+});
+
 // Log de chargement
 console.log('🎮 Retro Gaming Console loaded');

@@ -211,6 +211,110 @@ async def get_rom(emulator_id: str, rom_filename: str):
     return FileResponse(rom_path)
 
 
+@app.get("/scan")
+async def scan_roms():
+    """Scan all ROMs and create an index file"""
+    games_index = []
+    
+    for emulator_id, config in EMULATOR_CONFIG.items():
+        # Skip deactivated emulators
+        if not config.get("activated", True):
+            continue
+        
+        rom_path = os.path.join(ROM_BASE_PATH, config["roms"])
+        
+        if os.path.exists(rom_path):
+            extensions = config.get("extensions", [])
+            
+            # Walk through directories recursively
+            for root, dirs, files in os.walk(rom_path):
+                for file in files:
+                    if any(file.lower().endswith(ext.lower()) for ext in extensions):
+                        full_path = os.path.join(root, file)
+                        relative_path = os.path.relpath(full_path, rom_path)
+                        
+                        # Get file info
+                        file_stat = os.stat(full_path)
+                        file_size = file_stat.st_size
+                        
+                        # Remove extension for display name
+                        display_name = os.path.splitext(file)[0]
+                        
+                        # Get folder name if in subdirectory
+                        folder = os.path.dirname(relative_path) if os.path.dirname(relative_path) else None
+                        
+                        # Create initials for placeholder (first letter of each word)
+                        words = display_name.replace('_', ' ').replace('-', ' ').split()
+                        initials = ''.join([w[0].upper() for w in words if w])[:3]
+                        
+                        # Add to index
+                        games_index.append({
+                            "id": f"{emulator_id}_{relative_path}",
+                            "name": display_name,
+                            "filename": relative_path,
+                            "emulator_id": emulator_id,
+                            "emulator_name": config.get("name", emulator_id),
+                            "emulator_image": config.get("image", "🎮"),
+                            "folder": folder,
+                            "size": file_size,
+                            "initials": initials,
+                            "image": None  # Placeholder for future jacket images
+                        })
+    
+    # Save index to file
+    index_path = "app/games_index.json"
+    with open(index_path, "w", encoding="utf-8") as f:
+        json.dump(games_index, f, ensure_ascii=False, indent=2)
+    
+    return {
+        "status": "success",
+        "message": f"Scanned {len(games_index)} games",
+        "games_count": len(games_index)
+    }
+
+
+@app.get("/api/search")
+async def search_games(q: str = ""):
+    """Search games in the index"""
+    index_path = "app/games_index.json"
+    
+    # Check if index exists
+    if not os.path.exists(index_path):
+        return {
+            "status": "error",
+            "message": "Index not found. Please run /scan first.",
+            "results": []
+        }
+    
+    # Load index
+    with open(index_path, "r", encoding="utf-8") as f:
+        games_index = json.load(f)
+    
+    # If no query, return all games
+    if not q or q.strip() == "":
+        return {
+            "status": "success",
+            "results": games_index,
+            "count": len(games_index)
+        }
+    
+    # Search in game names (case insensitive)
+    query = q.lower()
+    results = [
+        game for game in games_index
+        if query in game["name"].lower() or 
+           query in game["emulator_name"].lower() or
+           (game["folder"] and query in game["folder"].lower())
+    ]
+    
+    return {
+        "status": "success",
+        "results": results,
+        "count": len(results),
+        "query": q
+    }
+
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run("main:app", host="0.0.0.0", port=80, reload=True)

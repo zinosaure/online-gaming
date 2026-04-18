@@ -12,17 +12,64 @@
     <a href="/" class="back-button">← Retour aux émulateurs</a>
 </div>
 
+<!-- Search Bar -->
+<div class="search-container">
+    <input type="text" id="searchInput" class="search-input" placeholder="🔍 Rechercher dans {{ emulator_name }}...">
+</div>
+
 {% if games %}
-<div class="games-grid">
+<div class="games-grid" id="gamesGrid">
     {% for game in games %}
-    <a href="/play/{{ emulator_id }}/{{ game.filename }}" class="game-card">
+    <a href="/play/{{ emulator_id }}/{{ game.filename }}" class="game-card" data-name="{{ game.display_name|lower }}">
+        <div class="game-image">
+            <div class="game-placeholder">{{ game.display_name[:3]|upper }}</div>
+        </div>
         <div class="game-name">{{ game.display_name }}</div>
     </a>
     {% endfor %}
+</div>
+<div id="noResults" class="no-games" style="display: none;">
+    Aucun jeu trouvé
 </div>
 {% else %}
 <div class="no-games">
     Aucun jeu disponible pour cet émulateur
 </div>
 {% endif %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Local search functionality for games
+const searchInput = document.getElementById('searchInput');
+const gamesGrid = document.getElementById('gamesGrid');
+const noResults = document.getElementById('noResults');
+
+if (searchInput && gamesGrid) {
+    searchInput.addEventListener('input', function() {
+        const query = this.value.toLowerCase().trim();
+        const gameCards = gamesGrid.querySelectorAll('.game-card');
+        let visibleCount = 0;
+        
+        gameCards.forEach(card => {
+            const gameName = card.getAttribute('data-name');
+            if (gameName.includes(query)) {
+                card.style.display = 'flex';
+                visibleCount++;
+            } else {
+                card.style.display = 'none';
+            }
+        });
+        
+        // Show/hide no results message
+        if (visibleCount === 0 && query.length > 0) {
+            gamesGrid.style.display = 'none';
+            noResults.style.display = 'block';
+        } else {
+            gamesGrid.style.display = 'flex';
+            noResults.style.display = 'none';
+        }
+    });
+}
+</script>
 {% endblock %}

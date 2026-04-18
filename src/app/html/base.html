@@ -15,7 +15,38 @@
     <meta name="description" content="Console de jeux rétro en ligne">
 </head>
 <body>
-    {% block content %}{% endblock %}
+    {% block header %}
+    <header class="main-header">
+        <div class="container">
+            <div class="header-content">
+                <a href="/" class="logo">
+                    🎮 <span>Retro Gaming</span>
+                </a>
+                <nav class="header-nav">
+                    <button id="scanButton" class="scan-button">
+                        🔍 Scan
+                    </button>
+                </nav>
+            </div>
+        </div>
+    </header>
+    {% endblock %}
+    
+    <main class="main-content">
+        {% block content %}{% endblock %}
+    </main>
+    
+    {% block footer %}
+    <footer class="main-footer">
+        <div class="container">
+            <p>&copy; 2026 Retro Gaming Console • Tous droits réservés</p>
+            <p class="footer-links">
+                <a href="https://github.com/zinosaure/online-gaming" target="_blank">GitHub</a> •
+                <a href="#" id="aboutLink">À propos</a>
+            </p>
+        </div>
+    </footer>
+    {% endblock %}
     
     <!-- JS principal -->
     <script src="/static/app.js"></script>

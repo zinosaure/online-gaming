@@ -6,26 +6,102 @@
 <div class="container">
     <h1>🎮 Retro Gaming Console</h1>
     
-    {% if emulators %}
-    <div class="emulator-grid">
-        {% for emulator in emulators %}
-        <a href="/emulator/{{ emulator.id }}" class="emulator-card">
-            <div>
-                <div class="emulator-image">{{ emulator.image }}</div>
-                <div class="emulator-name">{{ emulator.name }}</div>
-                <div class="emulator-description">{{ emulator.description }}</div>
-            </div>
-            <div class="rom-count">
-                <strong>{{ emulator.rom_count }}</strong> jeu{% if emulator.rom_count != 1 %}x{% endif %}
-            </div>
-        </a>
-        {% endfor %}
+    <!-- Search Bar -->
+    <div class="search-container">
+        <input type="text" id="searchInput" class="search-input" placeholder="🔍 Rechercher un jeu...">
+        <div id="searchResults" class="search-results" style="display: none;"></div>
     </div>
-    {% else %}
-    <div class="no-emulators">
-        Aucun émulateur disponible
+    
+    <!-- Emulators Grid (default view) -->
+    <div id="emulatorsView">
+        {% if emulators %}
+        <div class="emulator-grid">
+            {% for emulator in emulators %}
+            <a href="/emulator/{{ emulator.id }}" class="emulator-card">
+                <div>
+                    <div class="emulator-image">{{ emulator.image }}</div>
+                    <div class="emulator-name">{{ emulator.name }}</div>
+                    <div class="emulator-description">{{ emulator.description }}</div>
+                </div>
+                <div class="rom-count">
+                    <strong>{{ emulator.rom_count }}</strong> jeu{% if emulator.rom_count != 1 %}x{% endif %}
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="no-emulators">
+            Aucun émulateur disponible
+        </div>
+        {% endif %}
     </div>
-    {% endif %}
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Search functionality
+const searchInput = document.getElementById('searchInput');
+const searchResults = document.getElementById('searchResults');
+const emulatorsView = document.getElementById('emulatorsView');
+
+let searchTimeout;
+
+searchInput.addEventListener('input', function() {
+    clearTimeout(searchTimeout);
+    const query = this.value.trim();
+    
+    if (query.length === 0) {
+        // Show emulators view, hide search results
+        searchResults.style.display = 'none';
+        emulatorsView.style.display = 'block';
+        return;
+    }
+    
+    if (query.length < 2) {
+        return;
+    }
+    
+    // Debounce search
+    searchTimeout = setTimeout(async () => {
+        const results = await performSearch(query);
+        displaySearchResults(results, query);
+    }, 300);
+});
+
+function displaySearchResults(results, query) {
+    if (results.length === 0) {
+        searchResults.innerHTML = `
+            <div class="no-results">
+                <p>Aucun jeu trouvé pour "${query}"</p>
+                <small>Essayez de scanner les jeux d'abord avec le bouton Scan</small>
+            </div>
+        `;
+    } else {
+        searchResults.innerHTML = `
+            <div class="search-header">
+                <h3>${results.length} résultat${results.length > 1 ? 's' : ''} pour "${query}"</h3>
+            </div>
+            <div class="games-grid">
+                ${results.map(game => `
+                    <a href="/play/${game.emulator_id}/${game.filename}" class="game-card">
+                        <div class="game-image">
+                            ${game.image ? `<img src="${game.image}" alt="${game.name}">` : 
+                              `<div class="game-placeholder">${game.initials}</div>`}
+                        </div>
+                        <div class="game-info">
+                            <div class="game-name">${game.name}</div>
+                            <div class="game-emulator">${game.emulator_image} ${game.emulator_name}</div>
+                        </div>
+                    </a>
+                `).join('')}
+            </div>
+        `;
+    }
+    
+    emulatorsView.style.display = 'none';
+    searchResults.style.display = 'block';
+}
+</script>
 {% endblock %}
 
