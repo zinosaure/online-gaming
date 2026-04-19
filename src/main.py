@@ -262,7 +262,7 @@ async def scan_roms():
                         })
     
     # Save index to file
-    index_path = "app/games_index.json"
+    index_path = "/mnt/media/roms/games_index.json"
     with open(index_path, "w", encoding="utf-8") as f:
         json.dump(games_index, f, ensure_ascii=False, indent=2)
     
@@ -276,7 +276,7 @@ async def scan_roms():
 @app.get("/api/search")
 async def search_games(q: str = ""):
     """Search games in the index"""
-    index_path = "app/games_index.json"
+    index_path = "/mnt/media/roms/games_index.json"
     
     # Check if index exists
     if not os.path.exists(index_path):

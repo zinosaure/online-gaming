@@ -166,11 +166,10 @@ html, body {
     gap: 8px;
     font-family: Arial, sans-serif;
     font-weight: bold;
-    transition: background 0.3s ease;
 }
 
 .menu-button:hover {
-    background: white;
+    opacity: 0.85;
 }
 
 .menu-icon {
@@ -210,7 +209,7 @@ html, body {
     left: -350px;
     width: 350px;
     height: 100%;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #333;
     z-index: 1999;
     transition: left 0.3s ease;
     overflow-y: auto;

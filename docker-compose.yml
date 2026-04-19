@@ -24,4 +24,4 @@ services:
             - TZ=${TIMEZONE}
         volumes:
             - ./src:/app
-            - /mnt/media/openbox/games/internet/roms:/mnt/media/roms:ro
+            - /mnt/media/openbox/games/internet/roms:/mnt/media/roms

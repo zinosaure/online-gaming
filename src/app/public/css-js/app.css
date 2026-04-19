@@ -15,7 +15,7 @@ html, body {
 
 body {
     font-family: 'Arial', sans-serif;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #2d2d2d;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
@@ -25,18 +25,17 @@ body {
    HEADER
    ================================================ */
 .main-header {
-    background: rgba(0, 0, 0, 0.2);
-    backdrop-filter: blur(10px);
-    padding: 15px 20px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    background: #1a1a1a;
+    padding: 15px 0;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
 }
 
 .header-content {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    max-width: 1400px;
-    margin: 0 auto;
+    width: 100%;
+    padding: 0 20px;
 }
 
 .logo {
@@ -47,11 +46,10 @@ body {
     font-weight: bold;
     color: white;
     text-decoration: none;
-    transition: transform 0.2s ease;
 }
 
 .logo:hover {
-    transform: scale(1.05);
+    opacity: 0.85;
 }
 
 .logo span {
@@ -65,26 +63,23 @@ body {
 }
 
 .scan-button {
-    background: rgba(255, 255, 255, 0.9);
-    color: #667eea;
+    background: white;
+    color: #333;
     border: none;
     padding: 10px 20px;
     border-radius: 20px;
     font-weight: bold;
     font-size: 1em;
     cursor: pointer;
-    transition: all 0.3s ease;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
 .scan-button:hover {
-    background: white;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    opacity: 0.85;
 }
 
 .scan-button:active {
-    transform: translateY(0);
+    opacity: 1;
 }
 
 /* ================================================
@@ -93,6 +88,7 @@ body {
 .main-content {
     flex: 1;
     padding: 0;
+    margin-top: 40px;
 }
 
 /* ================================================
@@ -119,11 +115,10 @@ body {
 .footer-links a {
     color: white;
     text-decoration: none;
-    transition: opacity 0.2s ease;
 }
 
 .footer-links a:hover {
-    opacity: 0.7;
+    opacity: 0.85;
 }
 
 /* ================================================
@@ -132,6 +127,11 @@ body {
 .container {
     max-width: 1400px;
     margin: 0 auto;
+}
+
+.container-fluid {
+    width: 100%;
+    padding: 0;
 }
 
 /* ================================================
@@ -149,15 +149,13 @@ body {
     font-size: 1.1em;
     border: none;
     border-radius: 30px;
-    background: rgba(255, 255, 255, 0.95);
+    background: white;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
     outline: none;
-    transition: all 0.3s ease;
 }
 
 .search-input:focus {
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
-    background: white;
 }
 
 .search-results {
@@ -218,31 +216,28 @@ h2 {
 .back-button {
     display: inline-block;
     background: white;
-    color: #667eea;
+    color: #333;
     padding: 12px 30px;
     border-radius: 25px;
     text-decoration: none;
     font-weight: bold;
     box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .back-button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 7px 20px rgba(0,0,0,0.3);
+    opacity: 0.85;
 }
 
 /* ================================================
    CARDS
    ================================================ */
 .emulator-card {
-    background: white;
+    background: #1a1a1a;
     border-radius: 15px;
     padding: 40px;
     text-align: center;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
     cursor: pointer;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
     text-decoration: none;
     color: inherit;
     display: flex;
@@ -251,8 +246,7 @@ h2 {
 }
 
 .emulator-card:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+    opacity: 0.85;
 }
 
 .emulator-image {
@@ -263,13 +257,13 @@ h2 {
 .emulator-name {
     font-size: 1.5em;
     font-weight: bold;
-    color: #333;
+    color: #fff;
     margin-bottom: 10px;
 }
 
 .emulator-description {
     font-size: 0.9em;
-    color: #777;
+    color: #ccc;
     margin-bottom: 20px;
     line-height: 1.4;
     flex-grow: 1;
@@ -299,11 +293,10 @@ h2 {
 }
 
 .game-card {
-    background: white;
+    background: #1a1a1a;
     border-radius: 12px;
     overflow: hidden;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
     text-decoration: none;
     color: inherit;
     display: flex;
@@ -312,15 +305,14 @@ h2 {
 }
 
 .game-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    opacity: 0.85;
 }
 
 .game-image {
     width: 100%;
     height: 200px;
     overflow: hidden;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #333;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -352,7 +344,7 @@ h2 {
 .game-name {
     font-weight: 600;
     font-size: 1em;
-    color: #333;
+    color: #fff;
     overflow: hidden;
     text-overflow: ellipsis;
     display: -webkit-box;
@@ -363,7 +355,7 @@ h2 {
 
 .game-emulator {
     font-size: 0.85em;
-    color: #888;
+    color: #ccc;
     margin-top: 8px;
     display: flex;
     align-items: center;
@@ -374,22 +366,19 @@ h2 {
    GAME ITEMS
    ================================================ */
 .game-item {
-    background: white;
+    background: #1a1a1a;
     border-radius: 10px;
     padding: 20px;
     text-align: center;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.5);
     cursor: pointer;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
     text-decoration: none;
-    color: #333;
+    color: #fff;
     font-weight: 500;
 }
 
 .game-item:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 20px rgba(0,0,0,0.3);
-    background: #f8f9fa;
+    opacity: 0.85;
 }
 
 /* ================================================
@@ -397,15 +386,15 @@ h2 {
    ================================================ */
 .rom-count {
     font-size: 1.2em;
-    color: #666;
-    background: #f0f0f0;
+    color: #fff;
+    background: #333;
     padding: 10px 20px;
     border-radius: 20px;
     display: inline-block;
 }
 
 .rom-count strong {
-    color: #667eea;
+    color: #fff;
 }
 
 /* ================================================
