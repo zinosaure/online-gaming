@@ -69,6 +69,33 @@ function showError(message) {
     document.getElementById('loading').style.display = 'none';
     document.getElementById('errorText').textContent = message;
     document.getElementById('errorMessage').style.display = 'block';
+    initErrorGamepadNavigation();
+}
+
+// Gamepad navigation on error screen
+function initErrorGamepadNavigation() {
+    const btn = document.getElementById('errorBackBtn');
+    if (!btn) return;
+
+    btn.classList.add('gamepad-focused');
+
+    let lastInputTime = 0;
+    const interval = setInterval(() => {
+        const gamepads = navigator.getGamepads ? navigator.getGamepads() : [];
+        const gamepad = gamepads[0] || gamepads[1] || gamepads[2] || gamepads[3];
+        if (!gamepad) return;
+
+        const now = Date.now();
+        if (now - lastInputTime < 300) return;
+
+        // A (0) or B (1) = retour
+        if ((gamepad.buttons[0] && gamepad.buttons[0].pressed) ||
+            (gamepad.buttons[1] && gamepad.buttons[1].pressed)) {
+            clearInterval(interval);
+            btn.click();
+            lastInputTime = now;
+        }
+    }, 100);
 }
 
 function toggleMenu() {
@@ -82,12 +109,92 @@ function toggleMenu() {
         overlay.classList.add('active');
         pausedIndicator.style.display = 'block';
         pauseEmulator();
+        startMenuGamepadNavigation();
     } else {
         menu.classList.remove('active');
         overlay.classList.remove('active');
         pausedIndicator.style.display = 'none';
         resumeEmulator();
+        stopMenuGamepadNavigation();
     }
+}
+
+// Gamepad navigation inside the menu
+let menuNavInterval = null;
+let menuFocusIndex = 0;
+const MENU_NAV_DELAY = 200;
+let menuNavLastInput = 0;
+
+function getMenuButtons() {
+    return Array.from(document.querySelectorAll('#pushMenu .icon-btn')).filter(el => el.offsetParent !== null);
+}
+
+function updateMenuFocus(buttons) {
+    buttons.forEach((btn, i) => {
+        if (i === menuFocusIndex) {
+            btn.classList.add('gamepad-focused');
+        } else {
+            btn.classList.remove('gamepad-focused');
+        }
+    });
+}
+
+function startMenuGamepadNavigation() {
+    const buttons = getMenuButtons();
+    if (buttons.length === 0) return;
+    
+    menuFocusIndex = 0; // Default focus on "Reprendre"
+    updateMenuFocus(buttons);
+    
+    if (menuNavInterval) return;
+    
+    menuNavInterval = setInterval(() => {
+        const gamepads = navigator.getGamepads ? navigator.getGamepads() : [];
+        const gamepad = gamepads[0] || gamepads[1] || gamepads[2] || gamepads[3];
+        if (!gamepad) return;
+        
+        const now = Date.now();
+        if (now - menuNavLastInput < MENU_NAV_DELAY) return;
+        
+        const btns = getMenuButtons();
+        
+        // Navigate left/right with D-pad or left stick
+        const axisX = gamepad.axes[0] || 0;
+            const dpadAxisX = gamepad.axes[6] || 0;
+            const dLeft  = (gamepad.buttons[14] && gamepad.buttons[14].pressed) || axisX < -0.5 || dpadAxisX < -0.5;
+            const dRight = (gamepad.buttons[15] && gamepad.buttons[15].pressed) || axisX > 0.5 || dpadAxisX > 0.5;
+        
+        if (dLeft) {
+            menuFocusIndex = menuFocusIndex <= 0 ? btns.length - 1 : menuFocusIndex - 1;
+            updateMenuFocus(btns);
+            menuNavLastInput = now;
+        } else if (dRight) {
+            menuFocusIndex = menuFocusIndex >= btns.length - 1 ? 0 : menuFocusIndex + 1;
+            updateMenuFocus(btns);
+            menuNavLastInput = now;
+        }
+        
+        // A (0) = confirm
+        if (gamepad.buttons[0] && gamepad.buttons[0].pressed) {
+            btns[menuFocusIndex]?.click();
+            menuNavLastInput = now;
+        }
+        
+        // B (1) = close menu (reprendre)
+        if (gamepad.buttons[1] && gamepad.buttons[1].pressed) {
+            if (isMenuOpen) toggleMenu();
+            menuNavLastInput = now;
+        }
+    }, 100);
+}
+
+function stopMenuGamepadNavigation() {
+    if (menuNavInterval) {
+        clearInterval(menuNavInterval);
+        menuNavInterval = null;
+    }
+    // Clean up focus styles
+    getMenuButtons().forEach(btn => btn.classList.remove('gamepad-focused'));
 }
 
 function pauseEmulator() {
@@ -184,6 +291,14 @@ function initializeMenu() {
 
 // Initialize menu action buttons
 function initializeMenuActions(emulatorId) {
+    // Resume button
+    const resumeBtn = document.getElementById('resumeBtn');
+    if (resumeBtn) {
+        resumeBtn.addEventListener('click', function() {
+            if (isMenuOpen) toggleMenu();
+        });
+    }
+    
     // Quit button
     const quitBtn = document.getElementById('quitBtn');
     if (quitBtn) {
@@ -312,10 +427,12 @@ function showStartModal(emulatorId, romFilename, emulatorJs) {
             
             const now = Date.now();
             if (now - lastInputTime < INPUT_DELAY) return;
+            const dpadAxisX = gamepad.axes[6] || 0;
             
             // D-pad left (14) or left stick left
             if ((gamepad.buttons[14] && gamepad.buttons[14].pressed) || 
-                (gamepad.axes[0] && gamepad.axes[0] < -0.5)) {
+                (gamepad.axes[0] && gamepad.axes[0] < -0.5) ||
+                dpadAxisX < -0.5) {
                 currentModalButton = Math.max(0, currentModalButton - 1);
                 updateModalFocus();
                 lastInputTime = now;
@@ -323,7 +440,8 @@ function showStartModal(emulatorId, romFilename, emulatorJs) {
             
             // D-pad right (15) or left stick right
             if ((gamepad.buttons[15] && gamepad.buttons[15].pressed) || 
-                (gamepad.axes[0] && gamepad.axes[0] > 0.5)) {
+                (gamepad.axes[0] && gamepad.axes[0] > 0.5) ||
+                dpadAxisX > 0.5) {
                 currentModalButton = Math.min(modalButtons.length - 1, currentModalButton + 1);
                 updateModalFocus();
                 lastInputTime = now;

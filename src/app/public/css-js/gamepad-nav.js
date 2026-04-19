@@ -35,7 +35,8 @@
         observer.observe(document.body, { childList: true, subtree: true });
     }
     
-    // Get focusable elements: game/emulator cards first, then back buttons only
+    // Get focusable elements with explicit order:
+    // 1) cards, 2) back button, 3) search input, 4) scan button
     function updateFocusableElements() {
         const elements = [];
         
@@ -44,13 +45,29 @@
             if (el.offsetParent !== null) elements.push(el);
         });
         
-        // Priority 2: back button if present (not header/scan/search)
+        // Priority 2: back button (games page)
         document.querySelectorAll('.back-button:not(.modal-button)').forEach(el => {
             if (el.offsetParent !== null) elements.push(el);
         });
+
+        // Priority 3: search bar (index/games pages)
+        document.querySelectorAll('.search-input').forEach(el => {
+            if (el.offsetParent !== null && !el.disabled) elements.push(el);
+        });
+
+        // Priority 4: scan button in header
+        const scanButton = document.getElementById('scanButton');
+        if (scanButton && scanButton.offsetParent !== null && !scanButton.disabled) {
+            elements.push(scanButton);
+        }
         
         // Deduplicate while preserving order
         focusableElements = [...new Set(elements)];
+
+        // Keep index in bounds when list changes
+        if (currentFocusIndex >= focusableElements.length) {
+            currentFocusIndex = Math.max(0, focusableElements.length - 1);
+        }
     }
     
     // Focus an element with visual feedback
@@ -196,7 +213,12 @@
         if (gamepad.buttons[0] && gamepad.buttons[0].pressed) {
             const element = focusableElements[currentFocusIndex];
             if (element && now - lastInputTime >= INPUT_DELAY) {
-                element.click();
+                if (element.tagName === 'INPUT') {
+                    element.focus();
+                    element.click();
+                } else {
+                    element.click();
+                }
                 lastInputTime = now;
             }
         }

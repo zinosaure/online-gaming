@@ -260,6 +260,16 @@ html, body {
     font-size: 1em;
 }
 
+/* Resume Button - Green */
+.resume-btn {
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
+}
+
+.resume-btn:hover {
+    background: linear-gradient(135deg, #059669, #047857);
+}
+
 /* Quit Button - Red */
 .quit-btn {
     background: linear-gradient(135deg, #ef4444, #dc2626);

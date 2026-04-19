@@ -20,14 +20,17 @@
 
 <div class="push-menu" id="pushMenu">
     <div class="menu-buttons">
-        <button class="icon-btn quit-btn" id="quitBtn" title="Quitter">
-            <i class="fas fa-right-from-bracket"></i>
+        <button class="icon-btn resume-btn" id="resumeBtn" title="Reprendre">
+            <i class="fas fa-play"></i>
         </button>
         <button class="icon-btn reload-btn" id="reloadBtn" title="Recharger">
             <i class="fas fa-rotate-right"></i>
         </button>
         <button class="icon-btn fullscreen-btn" id="fullscreenBtn" title="Plein écran">
             <i class="fas fa-expand"></i>
+        </button>
+        <button class="icon-btn quit-btn" id="quitBtn" title="Quitter">
+            <i class="fas fa-right-from-bracket"></i>
         </button>
     </div>
 </div>
@@ -57,7 +60,7 @@
 <div class="error-message" id="errorMessage">
     <h2>❌ Erreur de chargement</h2>
     <p id="errorText">Le jeu n'a pas pu être chargé. Veuillez vérifier le fichier ROM.</p>
-    <button onclick="window.location.href='/emulator/{{ emulator_id }}'">Retour à la liste</button>
+    <button id="errorBackBtn" onclick="window.location.href='/emulator/{{ emulator_id }}'">Retour à la liste</button>
 </div>
 
 <div class="loading" id="loading">
