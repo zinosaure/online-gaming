@@ -38,6 +38,22 @@
     <span id="toastMessage"></span>
 </div>
 
+<!-- Start Game Modal -->
+<div class="start-modal" id="startModal">
+    <div class="start-modal-content">
+        <h1>{{ game_name }}</h1>
+        <p class="start-hint">🎮 Utilisez une manette pour la meilleure expérience</p>
+        <div class="modal-buttons">
+            <button class="modal-button back-button" id="backButton">
+                <i class="fas fa-arrow-left"></i> RETOUR
+            </button>
+            <button class="modal-button start-button" id="startButton">
+                <i class="fas fa-play"></i> PLAY
+            </button>
+        </div>
+    </div>
+</div>
+
 <div class="error-message" id="errorMessage">
     <h2>❌ Erreur de chargement</h2>
     <p id="errorText">Le jeu n'a pas pu être chargé. Veuillez vérifier le fichier ROM.</p>
@@ -67,6 +83,8 @@
     initializeMenu();
     initializeMenuActions('{{ emulator_id }}');
     initializeAutoPause();
-    loadEmulator('{{ emulator_id }}', '{{ rom_filename }}', '{{ emulator_js }}');
+    
+    // Show start modal and wait for user interaction
+    showStartModal('{{ emulator_id }}', '{{ rom_filename }}', '{{ emulator_js }}');
 </script>
 {% endblock %}

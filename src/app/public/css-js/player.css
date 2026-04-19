@@ -313,6 +313,13 @@ html, body {
     bottom: 30px;
 }
 
+/* Gamepad Focus (navigation) */
+.gamepad-focused {
+    box-shadow: 0 0 0 3px #10b981, 0 0 20px rgba(16, 185, 129, 0.5) !important;
+    transform: scale(1.05) !important;
+    transition: all 0.2s ease !important;
+}
+
 /* Game Paused Indicator */
 .game-paused {
     position: fixed;
@@ -344,5 +351,148 @@ html, body {
         width: 80px;
         height: 80px;
         font-size: 2.5em;
+    }
+}
+
+/* Start Modal */
+.start-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.95);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.start-modal-content {
+    text-align: center;
+    padding: 40px;
+    border-radius: 20px;
+    background: linear-gradient(135deg, #1a1a1a, #2d2d2d);
+    box-shadow: 0 10px 50px rgba(0, 0, 0, 0.8);
+    max-width: 500px;
+    width: 90%;
+}
+
+.start-modal-content h1 {
+    color: white;
+    font-size: 2.5em;
+    margin-bottom: 20px;
+    font-family: Arial, sans-serif;
+}
+
+.start-hint {
+    color: #aaa;
+    font-size: 1.1em;
+    margin-bottom: 30px;
+    font-family: Arial, sans-serif;
+}
+
+/* Modal Buttons Container */
+.modal-buttons {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+/* Modal Button Base */
+.modal-button {
+    border: none;
+    padding: 20px 50px;
+    font-size: 1.5em;
+    border-radius: 50px;
+    cursor: pointer;
+    font-family: Arial, sans-serif;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 15px;
+    position: relative;
+}
+
+.modal-button i {
+    font-size: 1em;
+}
+
+/* Start Button (Green) */
+.start-button {
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
+    box-shadow: 0 5px 20px rgba(16, 185, 129, 0.5);
+}
+
+.start-button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 30px rgba(16, 185, 129, 0.7);
+    background: linear-gradient(135deg, #059669, #047857);
+}
+
+/* Back Button (Red) */
+.back-button {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    color: white;
+    box-shadow: 0 5px 20px rgba(239, 68, 68, 0.5);
+}
+
+.back-button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 30px rgba(239, 68, 68, 0.7);
+    background: linear-gradient(135deg, #dc2626, #b91c1c);
+}
+
+/* Active state for both */
+.modal-button:active {
+    transform: scale(0.95);
+}
+
+/* Gamepad Focus Indicator (Arrow) */
+.modal-button.gamepad-focused::before {
+    content: '▶';
+    position: absolute;
+    left: -40px;
+    font-size: 2em;
+    color: #10b981;
+    animation: arrowBounce 0.6s ease-in-out infinite;
+}
+
+@keyframes arrowBounce {
+    0%, 100% {
+        transform: translateX(0);
+    }
+    50% {
+        transform: translateX(-8px);
+    }
+}
+
+@media (max-width: 768px) {
+    .start-modal-content h1 {
+        font-size: 2em;
+    }
+    
+    .modal-button {
+        padding: 15px 35px;
+        font-size: 1.2em;
+    }
+    
+    .modal-buttons {
+        gap: 15px;
+    }
+    
+    .modal-button.gamepad-focused::before {
+        left: -30px;
+        font-size: 1.5em;
     }
 }

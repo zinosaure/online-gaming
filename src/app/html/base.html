@@ -23,7 +23,7 @@
                     🎮 <span>Retro Gaming</span>
                 </a>
                 <nav class="header-nav">
-                    <button id="scanButton" class="scan-button">
+                    <button id="scanButton" class="scan-button" tabindex="-1">
                         🔍 Scan
                     </button>
                 </nav>
@@ -49,6 +49,7 @@
     {% endblock %}
     
     <!-- JS principal -->
+    <script src="/static/gamepad-nav.js?t={{ cache_buster }}"></script>
     <script src="/static/app.js?t={{ cache_buster }}"></script>
     
     <!-- JS spécifique à la page -->
