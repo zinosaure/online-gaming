@@ -6,7 +6,7 @@
     <title>{% block title %}Retro Gaming Console{% endblock %}</title>
     
     <!-- CSS principal -->
-    <link rel="stylesheet" href="/static/app.css">
+    <link rel="stylesheet" href="/static/app.css?t={{ cache_buster }}">
     
     <!-- CSS spécifique à la page -->
     {% block extra_css %}{% endblock %}
@@ -49,7 +49,7 @@
     {% endblock %}
     
     <!-- JS principal -->
-    <script src="/static/app.js"></script>
+    <script src="/static/app.js?t={{ cache_buster }}"></script>
     
     <!-- JS spécifique à la page -->
     {% block extra_js %}{% endblock %}

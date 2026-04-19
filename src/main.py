@@ -6,6 +6,7 @@ import json
 import os
 import zipfile
 import io
+import time
 from pathlib import Path
 from typing import List, Dict
 
@@ -16,6 +17,10 @@ app.mount("/static", StaticFiles(directory="app/public/css-js"), name="static")
 
 # Templates
 templates = Jinja2Templates(directory="app/html")
+
+# Add global context processor for cache busting
+def get_cache_buster():
+    return int(time.time())
 
 # Load mapping configuration
 with open("app/mapping.json", "r") as f:
@@ -98,7 +103,8 @@ async def index(request: Request):
     emulators = get_available_emulators()
     return templates.TemplateResponse("index.html", {
         "request": request,
-        "emulators": emulators
+        "emulators": emulators,
+        "cache_buster": get_cache_buster()
     })
 
 
@@ -108,7 +114,8 @@ async def emulator_games(request: Request, emulator_id: str):
     if emulator_id not in EMULATOR_CONFIG:
         return templates.TemplateResponse("error.html", {
             "request": request,
-            "message": f"Emulator '{emulator_id}' not found"
+            "message": f"Emulator '{emulator_id}' not found",
+            "cache_buster": get_cache_buster()
         })
     
     # Check if emulator is activated
@@ -116,7 +123,8 @@ async def emulator_games(request: Request, emulator_id: str):
     if not config.get("activated", True):
         return templates.TemplateResponse("error.html", {
             "request": request,
-            "message": f"Emulator '{emulator_id}' is not activated"
+            "message": f"Emulator '{emulator_id}' is not activated",
+            "cache_buster": get_cache_buster()
         })
     
     roms = get_roms_for_emulator(emulator_id)
@@ -124,7 +132,8 @@ async def emulator_games(request: Request, emulator_id: str):
         "request": request,
         "emulator_id": emulator_id,
         "emulator_name": config.get("name", emulator_id),
-        "games": roms
+        "games": roms,
+        "cache_buster": get_cache_buster()
     })
 
 
@@ -134,7 +143,8 @@ async def play_game(request: Request, emulator_id: str, rom_filename: str):
     if emulator_id not in EMULATOR_CONFIG:
         return templates.TemplateResponse("error.html", {
             "request": request,
-            "message": f"Emulator '{emulator_id}' not found"
+            "message": f"Emulator '{emulator_id}' not found",
+            "cache_buster": get_cache_buster()
         })
     
     config = EMULATOR_CONFIG[emulator_id]
@@ -143,7 +153,8 @@ async def play_game(request: Request, emulator_id: str, rom_filename: str):
     if not config.get("activated", True):
         return templates.TemplateResponse("error.html", {
             "request": request,
-            "message": f"Emulator '{emulator_id}' is not activated"
+            "message": f"Emulator '{emulator_id}' is not activated",
+            "cache_buster": get_cache_buster()
         })
     
     display_name = os.path.splitext(os.path.basename(rom_filename))[0]
@@ -155,7 +166,8 @@ async def play_game(request: Request, emulator_id: str, rom_filename: str):
         "emulator_js": config["emulator"],
         "rom_filename": rom_filename,
         "game_name": display_name,
-        "controls": json.dumps(config.get("controls", {}))
+        "controls": json.dumps(config.get("controls", {})),
+        "cache_buster": get_cache_buster()
     })
 
 

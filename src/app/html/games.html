@@ -3,7 +3,7 @@
 {% block title %}{{ emulator_name }} - Jeux{% endblock %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="/static/games.css">
+<link rel="stylesheet" href="/static/games.css?t={{ cache_buster }}">
 {% endblock %}
 
 {% block content %}

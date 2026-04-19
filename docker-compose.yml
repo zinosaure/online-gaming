@@ -1,4 +1,6 @@
 networks:
+    bridge:
+        driver: bridge
     skinoapp_network:
         external: true
 

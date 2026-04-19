@@ -6,81 +6,37 @@
 {% block footer %}{% endblock %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="/static/player.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<link rel="stylesheet" href="/static/player.css?t={{ cache_buster }}">
 {% endblock %}
 
 {% block content %}
 
 <button class="menu-button" id="menuButton">
-    <div class="menu-icon">
-        <span></span>
-        <span></span>
-        <span></span>
-    </div>
-    Menu
+    <i class="fas fa-bars"></i>
 </button>
 
 <div class="menu-overlay" id="menuOverlay"></div>
 
 <div class="push-menu" id="pushMenu">
-    <div class="menu-header">
-        <h2>{{ game_name }}</h2>
-        <p>{{ emulator_name }}</p>
-    </div>
-    <div class="menu-content">
-        <div class="menu-section">
-            <h3>Audio</h3>
-            <div class="volume-slider-container">
-                <div class="volume-slider-label">
-                    <span>🔊 Volume</span>
-                    <span id="volumeValue">50%</span>
-                </div>
-                <input type="range" class="volume-slider" id="volumeSlider" min="0" max="100" value="50">
-            </div>
-        </div>
-        
-        <div class="menu-section">
-            <h3>Actions</h3>
-            <button class="menu-item" id="saveStateBtn">
-                <span class="menu-item-icon">💾</span>
-                <span>Sauvegarder l'état</span>
-            </button>
-            <button class="menu-item" id="loadStateBtn">
-                <span class="menu-item-icon">📂</span>
-                <span>Charger l'état</span>
-            </button>
-            <button class="menu-item" id="resetBtn">
-                <span class="menu-item-icon">🔄</span>
-                <span>Redémarrer le jeu</span>
-            </button>
-            <button class="menu-item" id="fullscreenBtn">
-                <span class="menu-item-icon">⛶</span>
-                <span>Plein écran</span>
-            </button>
-        </div>
-        
-        <div class="menu-section">
-            <h3>Navigation</h3>
-            <button class="menu-item danger" id="exitBtn">
-                <span class="menu-item-icon">←</span>
-                <span>Retour / Quitter</span>
-            </button>
-        </div>
-        
-        <div class="menu-section">
-            <h3>Infos</h3>
-            <div class="volume-slider-container">
-                <p style="color: white; margin: 0; font-size: 0.9em; line-height: 1.5;">
-                    <strong>Raccourci menu:</strong> <span id="menuShortcut">Select + Start</span><br>
-                    <strong>ROM:</strong> {{ rom_filename }}<br>
-                    <strong>Émulateur:</strong> {{ emulator_name }}
-                </p>
-            </div>
-        </div>
+    <div class="menu-buttons">
+        <button class="icon-btn quit-btn" id="quitBtn" title="Quitter">
+            <i class="fas fa-right-from-bracket"></i>
+        </button>
+        <button class="icon-btn reload-btn" id="reloadBtn" title="Recharger">
+            <i class="fas fa-rotate-right"></i>
+        </button>
+        <button class="icon-btn fullscreen-btn" id="fullscreenBtn" title="Plein écran">
+            <i class="fas fa-expand"></i>
+        </button>
     </div>
 </div>
 
 <div class="game-paused" id="gamePaused">⏸ PAUSE</div>
+
+<div class="toast" id="toast">
+    <span id="toastMessage"></span>
+</div>
 
 <div class="error-message" id="errorMessage">
     <h2>❌ Erreur de chargement</h2>
@@ -102,7 +58,7 @@
 
 {% block extra_js %}
 <script src="/static/{{ emulator_js }}"></script>
-<script src="/static/player.js"></script>
+<script src="/static/player.js?t={{ cache_buster }}"></script>
 <script>
     // Inject controls configuration from backend
     const controlsConfig = {{ controls|safe }};
@@ -110,7 +66,7 @@
     // Initialize all functionality
     initializeMenu();
     initializeMenuActions('{{ emulator_id }}');
-    initializeVolumeControl();
+    initializeAutoPause();
     loadEmulator('{{ emulator_id }}', '{{ rom_filename }}', '{{ emulator_js }}');
 </script>
 {% endblock %}

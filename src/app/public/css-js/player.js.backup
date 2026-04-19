@@ -25,11 +25,6 @@ function showToast(message, duration = 5000) {
     const toast = document.getElementById('toast');
     const toastMessage = document.getElementById('toastMessage');
     
-    if (!toast || !toastMessage) {
-        console.error('Toast elements not found');
-        return;
-    }
-    
     toastMessage.textContent = message;
     toast.classList.add('show');
     
@@ -111,23 +106,17 @@ function initializeMenu() {
     
     // Hide menu button on Android devices
     const menuButton = document.getElementById('menuButton');
-    if (isAndroidDevice && menuButton) {
+    if (isAndroidDevice) {
         menuButton.style.display = 'none';
-        // Show toast with instructions after a delay to ensure page is fully loaded
+        // Show toast with instructions
         setTimeout(() => {
             showToast('Appuyez sur Select + Start pour ouvrir le menu', 6000);
-        }, 3000);
+        }, 2000);
     }
     
     // Menu button event
-    if (menuButton) {
-        menuButton.addEventListener('click', toggleMenu);
-    }
-    
-    const menuOverlay = document.getElementById('menuOverlay');
-    if (menuOverlay) {
-        menuOverlay.addEventListener('click', toggleMenu);
-    }
+    menuButton.addEventListener('click', toggleMenu);
+    document.getElementById('menuOverlay').addEventListener('click', toggleMenu);
     
     // Keyboard shortcuts for menu - dynamically detect based on controls
     let menuKey1 = 'KeyA'; // default select
@@ -159,8 +148,8 @@ function initializeMenu() {
         }
     }
     
-    // Menu shortcut text removed (simplified menu with 3 icon buttons only)
-    // document.getElementById('menuShortcut').textContent = menuShortcutText;
+    // Update menu shortcut text in UI
+    document.getElementById('menuShortcut').textContent = menuShortcutText;
     
     document.addEventListener('keydown', function(e) {
         if (e.code === menuKey1) menuKey1Pressed = true;
@@ -185,55 +174,125 @@ function initializeMenu() {
 // Initialize menu action buttons
 function initializeMenuActions(emulatorId) {
     // Quit button
-    const quitBtn = document.getElementById('quitBtn');
-    if (quitBtn) {
-        quitBtn.addEventListener('click', function() {
-            exitFullscreen();
-            setTimeout(() => {
-                window.location.href = '/emulator/' + emulatorId;
-            }, 100);
-        });
-    }
+    document.getElementById('quitBtn').addEventListener('click', function() {
+        exitFullscreen();
+        setTimeout(() => {
+            window.location.href = '/emulator/' + emulatorId;
+        }, 100);
+    });
     
     // Reload button
-    const reloadBtn = document.getElementById('reloadBtn');
-    if (reloadBtn) {
-        reloadBtn.addEventListener('click', function() {
-            location.reload();
-        });
-    }
+    document.getElementById('reloadBtn').addEventListener('click', function() {
+        location.reload();
+    });
+    
+    // Exit button (legacy)
+    document.getElementById('exitBtn').addEventListener('click', function() {
+        exitFullscreen();
+        setTimeout(() => {
+            window.location.href = '/emulator/' + emulatorId;
+        }, 100);
+    });
+    
+    // Save state
+    document.getElementById('saveStateBtn').addEventListener('click', function() {
+        if (emulatorInstance && typeof emulatorInstance.saveState === 'function') {
+            emulatorInstance.saveState();
+            alert('État sauvegardé !');
+        } else {
+            // Fallback: trigger button click in emulator UI
+            const saveBtn = document.querySelector('[data-action="save"]') || document.querySelector('button:contains("SAVE")');
+            if (saveBtn) saveBtn.click();
+        }
+    });
+    
+    // Load state
+    document.getElementById('loadStateBtn').addEventListener('click', function() {
+        if (emulatorInstance && typeof emulatorInstance.loadState === 'function') {
+            emulatorInstance.loadState();
+            alert('État chargé !');
+        } else {
+            // Fallback: trigger button click in emulator UI
+            const loadBtn = document.querySelector('[data-action="load"]') || document.querySelector('button:contains("LOAD")');
+            if (loadBtn) loadBtn.click();
+        }
+    });
+    
+    // Reset game
+    document.getElementById('resetBtn').addEventListener('click', function() {
+        if (confirm('Voulez-vous vraiment redémarrer le jeu ?')) {
+            if (emulatorInstance && typeof emulatorInstance.reset === 'function') {
+                emulatorInstance.reset();
+            } else {
+                location.reload();
+            }
+        }
+    });
     
     // Fullscreen toggle
-    const fullscreenBtn = document.getElementById('fullscreenBtn');
-    if (fullscreenBtn) {
-        fullscreenBtn.addEventListener('click', function() {
-            if (!document.fullscreenElement) {
-                enterFullscreen();
-            } else {
-                exitFullscreen();
-            }
-        });
-    }
+    document.getElementById('fullscreenBtn').addEventListener('click', function() {
+        if (!document.fullscreenElement) {
+            enterFullscreen();
+        } else {
+            exitFullscreen();
+        }
+    });
 }
 
 // Initialize automatic pause on blur
 function initializeAutoPause() {
-    // Delay to avoid interfering with initial load
-    setTimeout(function() {
-        window.addEventListener('blur', function() {
-            if (!gamePaused && !isMenuOpen && emulatorInstance) {
-                pauseEmulator();
-                document.getElementById('gamePaused').style.display = 'block';
-            }
+    window.addEventListener('blur', function() {
+        if (!gamePaused && !isMenuOpen) {
+            pauseEmulator();
+            document.getElementById('gamePaused').style.display = 'block';
+        }
+    });
+    
+    window.addEventListener('focus', function() {
+        if (gamePaused && !isMenuOpen) {
+            resumeEmulator();
+            document.getElementById('gamePaused').style.display = 'none';
+        }
+    });
+}
+
+// Initialize volume control
+function initializeVolumeControl() {
+    const volumeSlider = document.getElementById('volumeSlider');
+    const volumeValue = document.getElementById('volumeValue');
+    
+    volumeSlider.addEventListener('input', function() {
+        const volume = this.value / 100;
+        volumeValue.textContent = this.value + '%';
+        
+        // Update all audio elements
+        const audioElements = document.querySelectorAll('audio');
+        audioElements.forEach(function(audio) {
+            audio.volume = volume;
         });
         
-        window.addEventListener('focus', function() {
-            if (gamePaused && !isMenuOpen && emulatorInstance) {
-                resumeEmulator();
-                document.getElementById('gamePaused').style.display = 'none';
-            }
+        // Try to update emulator audio if available
+        if (emulatorInstance && emulatorInstance.audio) {
+            emulatorInstance.audio.volume = volume;
+        }
+        if (window.EJS_emulator && window.EJS_emulator.audio) {
+            window.EJS_emulator.audio.volume = volume;
+        }
+    });
+}
+
+// Setup volume after emulator starts
+function setupVolumeControl() {
+    const volumeSlider = document.getElementById('volumeSlider');
+    var audioElements = document.querySelectorAll('audio');
+    var initialVolume = volumeSlider.value / 100;
+    
+    setTimeout(function() {
+        audioElements = document.querySelectorAll('audio');
+        audioElements.forEach(function(audio) {
+            audio.volume = initialVolume;
         });
-    }, 2000);
+    }, 500);
 }
 
 // Load and start the emulator
@@ -281,6 +340,7 @@ function loadEmulator(emulatorId, romFilename, emulatorJs) {
                             backEnabled: false,
                             cbStarted: function() {
                                 pleaseWait.style.display = "none";
+                                setupVolumeControl();
                                 
                                 // Show prompt for fullscreen on mobile
                                 if (isMobileDevice()) {
