@@ -1,0 +1,20 @@
+{
+  "name": "Retro Gaming Console",
+  "short_name": "RetroGaming",
+  "description": "Console de jeux retro en ligne",
+  "lang": "fr",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "landscape",
+  "background_color": "#101010",
+  "theme_color": "#1a1a1a",
+  "icons": [
+    {
+      "src": "/static/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

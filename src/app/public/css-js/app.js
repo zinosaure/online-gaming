@@ -268,6 +268,15 @@ function getInitials(name) {
 
 // Initialisation quand le DOM est chargé
 document.addEventListener('DOMContentLoaded', function() {
+    // PWA service worker registration (works only on secure contexts / localhost)
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function() {
+            navigator.serviceWorker.register('/sw.js', { scope: '/' }).catch((error) => {
+                console.error('Service worker registration failed:', error);
+            });
+        });
+    }
+
     // Bouton Scan
     const scanButton = document.getElementById('scanButton');
     if (scanButton) {

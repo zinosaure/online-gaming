@@ -108,6 +108,25 @@ async def index(request: Request):
     })
 
 
+@app.get("/manifest.webmanifest")
+async def manifest():
+    """Serve Web App Manifest for PWA install support"""
+    return FileResponse(
+        "app/public/css-js/manifest.webmanifest",
+        media_type="application/manifest+json"
+    )
+
+
+@app.get("/sw.js")
+async def service_worker():
+    """Serve service worker at root scope"""
+    return FileResponse(
+        "app/public/css-js/sw.js",
+        media_type="application/javascript",
+        headers={"Service-Worker-Allowed": "/"}
+    )
+
+
 @app.get("/emulator/{emulator_id}", response_class=HTMLResponse)
 async def emulator_games(request: Request, emulator_id: str):
     """List of games for a specific emulator"""
