@@ -75,7 +75,7 @@
         "description": "Console 64-bit de Nintendo sortie en 1996",
         "image": "🎯",
         "emulator": "Nintendo64.min.js",
-        "extensions": [".n64", ".zip"],
+        "extensions": [".n64", ".z64", ".v64", ".zip"],
         "roms": "n64",
         "controls": {
             "player1": {
