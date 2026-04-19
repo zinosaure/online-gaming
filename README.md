@@ -129,3 +129,52 @@ docker-compose up --build -d
 ## Crédits
 
 Émulateurs basés sur [Emulatrix](https://github.com/lrusso/Emulatrix)
+
+## Etat d'Avancement (Session du 2026-04-19)
+
+### Ce qui a ete fait
+
+- Refonte de la logique manette dans le player :
+    - detection avant lancement du jeu
+    - ecran de demarrage avec bouton Play
+    - fullscreen declenche via interaction utilisateur
+    - activation/desactivation des controles tactiles selon presence manette
+- Ajout d'un modal de demarrage avec navigation manette :
+    - boutons `Retour` + `Play`
+    - focus visuel et fleche de selection
+    - validation via bouton A, retour via bouton B
+- Amelioration du menu pause en jeu :
+    - ajout du bouton `Reprendre`
+    - navigation manette dans le menu (gauche/droite + A/B)
+- Ajout de la navigation manette globale hors player :
+    - navigation entre cartes de jeux/emulateurs
+    - navigation de la barre de recherche et du bouton scan
+- Ajout de la navigation manette sur l'ecran d'erreur de chargement
+    - bouton retour selectionnable
+    - action A/B pour revenir a la liste
+- Nettoyage des anciens logs de debug visibles dans l'UI
+- Mise en place PWA :
+    - manifest web app
+    - service worker (cache shell + assets statiques)
+    - icon PWA
+    - enregistrement automatique du service worker
+    - routes FastAPI pour `manifest.webmanifest` et `sw.js`
+
+### Ce qu'il reste a faire
+
+- Validation complete sur appareils Android reels (plusieurs manettes et navigateurs)
+- Ajouter un bouton explicite `Installer l'app` (workflow `beforeinstallprompt`)
+- Ajouter une vraie page offline (actuellement fallback basique)
+- Ameliorer la strategie de versionnement du cache PWA (invalidation automatique par version)
+- Ajouter des tests manuels de regression pour :
+    - navigation manette (index, games, modal play, menu pause, ecran erreur)
+    - compatibilite D-pad via boutons et via axes (6/7)
+    - coexistence manette + tactile sur mobile
+- Nettoyage technique optionnel :
+    - retirer les imports Python non utilises dans `src/main.py`
+    - harmoniser les textes FR (accents/capitalisation)
+
+### Notes
+
+- Le service worker fonctionne en contexte securise (HTTPS) ou localhost.
+- En acces HTTP non securise sur IP locale mobile, l'installation PWA peut ne pas apparaitre selon le navigateur.
